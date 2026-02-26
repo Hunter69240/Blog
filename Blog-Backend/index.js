@@ -1,25 +1,15 @@
 const express=require("express");
-const {Pool}=require("pg")
+
 require('dotenv').config();
 const app=express()
 const port=3000
+app.use(express.json());
+const mainRoutes=require("./routes/blog_routes")
 
-const pool = new Pool({
-  user: process.env.DB_USER ,
-  host: process.env.DB_HOST, 
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-  database:process.env.DB_NAME
-});
 
-pool.connect((err, client, done) => {
-  if (err) throw err;
-  console.log('Connected to PostgreSQL database!');
- 
-});
-app.get("/",(req,res)=>{
-    res.send("Server running");
-})
+
+
+app.use("/api",mainRoutes)
 
 app.listen(port,()=>{
     console.log(`Running in  http://localhost:${port} `)
