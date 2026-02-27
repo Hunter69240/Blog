@@ -57,6 +57,7 @@ async function login(req,res){
             token:token,
         })
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ message: "authController - 53 Internal server error" });
     }
 
