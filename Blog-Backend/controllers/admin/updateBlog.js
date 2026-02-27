@@ -1,3 +1,11 @@
+/*
+ * Method: PATCH
+ * URL: /blogs/:id
+ * Example URL: /blogs/1
+ * Body: Yes (title, content, cover_image - at least one required)
+ * Params: Yes (id)
+ */
+
 const db=require("../../db")
 
 async function updateBlog(req,res){
@@ -63,7 +71,7 @@ async function updateBlog(req,res){
         })
         
     }catch(err){
-        console.log(err)
+        console.log("update blog error",err)
         if (err.code === "23505") {
             return res.status(400).json({
                 success: false,

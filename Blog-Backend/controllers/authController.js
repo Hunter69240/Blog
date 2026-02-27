@@ -1,3 +1,10 @@
+/*
+ * Method: POST
+ * URL: /login
+ * Body: Yes (email, password)
+ * Params: No
+ */
+
 const db=require("../db")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");

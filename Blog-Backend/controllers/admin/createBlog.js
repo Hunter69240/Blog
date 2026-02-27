@@ -1,3 +1,11 @@
+/*
+ * Method: POST
+ * URL: /blogs
+ * Example URL: /blogs
+ * Body: Yes (title, content, cover_image)
+ * Params: No
+ */
+
 const db=require("../../db")
 async function createBlog(req,res){
 

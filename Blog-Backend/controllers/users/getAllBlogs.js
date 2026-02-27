@@ -1,3 +1,11 @@
+/*
+ * Method: GET
+ * URL: /blogs
+ * Example URL: /blogs
+ * Body: No
+ * Params: No
+ */
+
 const db=require("../../db")
 
 async function getAllBlogs(req,res){

@@ -1,9 +1,17 @@
+/*
+ * Method: GET
+ * URL: /blogs/:slug
+ * Example URL: /blogs/my-first-blog
+ * Body: No
+ * Params: Yes (slug)
+ */
+
 const db=require("../../db")
 
 async function getBlogBySlug(req,res){
     const {slug}=req.params
     const query= {
-        text:"select id,title,content,cover_image,created_at,updated_at from blogs where slug = $1 and is_published=true",
+        text:"select id,title,content,cover_image,created_at from blogs where slug = $1 and is_published=true",
         values:[slug]
     }
     try{
@@ -20,7 +28,7 @@ async function getBlogBySlug(req,res){
             blog:rows[0]
         })
     }catch(err){
-        console.error(err);
+        console.error("getBlogBySlug error",err);
         return res.status(500).json({
             success:false,
             message:"Error fetching blog"

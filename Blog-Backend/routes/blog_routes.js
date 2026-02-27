@@ -7,6 +7,8 @@ const getBlogs=require("../controllers/users/getAllBlogs")
 const getBlogBySlug=require("../controllers/users/getBlogBySlug")
 const createBlog=require("../controllers/admin/createBlog")
 const updateBlog=require("../controllers/admin/updateBlog")
+const publishBlog=require("../controllers/admin/publishBlog")
+const unPublishBlog=require("../controllers/admin/unPublishBlog")
 
 router.post(
     "/login",
@@ -36,6 +38,18 @@ router.patch(
     "/blogs/:id",
     requireUser,
     updateBlog
+)
+
+router.patch(
+    "/blogs/:id/publish",
+    requireUser,
+    publishBlog
+)
+
+router.patch(
+    "/blogs/:id/unpublish",
+    requireUser,
+    unPublishBlog
 )
 /* Admin side done*/
 module.exports=router
