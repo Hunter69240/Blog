@@ -11,7 +11,7 @@ const db=require("../../db")
 async function getBlogBySlug(req,res){
     const {slug}=req.params
     const query= {
-        text:"select id,title,content,cover_image,created_at from blogs where slug = $1 and is_published=true",
+        text:"select id,title,tag,content,cover_image,created_at from blogs where slug = $1 and is_published=true",
         values:[slug]
     }
     try{

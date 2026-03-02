@@ -3,10 +3,43 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import { useNavigate } from 'react-router-dom';
+const convertTime = (time) => {
+  if (!time) return "—";
 
-const CardInfo = () => {
+  const date = new Date(time);
+
+  const formattedDate = date.toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    timeZone: "Asia/Kolkata"
+  });
+
+  const formattedTime = date.toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Asia/Kolkata"
+  });
+
+  return `${formattedDate} • ${formattedTime}`;
+};
+
+
+const CardInfo = ({blog}) => {
+  const navigate = useNavigate();
+  if (!blog) return null
+  const {id,title,slug,cover_image,created_at,tag,description}=blog
+  
+
+  const handleClick = ()=>{
+   
+    navigate(`/blog/${slug}`)
+  }
   return (
     <Box
+      id={id}
       sx={(theme) => ({
         bgcolor:
           theme.palette.mode === "dark" ? "#0B1120" : "#ffffff",
@@ -29,7 +62,7 @@ const CardInfo = () => {
             ? "0 4px 20px rgba(0,0,0,0.04)"
             : "none",
 
-        transition: "all 0.3s ease",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
 
         "&:hover": {
           transform: "translateY(-6px)",
@@ -48,7 +81,7 @@ const CardInfo = () => {
             fontWeight: 600,
           }}
         >
-          [ CUDA Deep Dive ]
+          {tag}
         </Typography>
 
      
@@ -61,7 +94,7 @@ const CardInfo = () => {
         >
           <Box
             component="img"
-            src="/Warframe0000.jpg"
+            src={cover_image}
             alt="Card image"
             sx={{
               width: "100%",
@@ -85,24 +118,23 @@ const CardInfo = () => {
             },
           }}
         >
-          Building a High-Performance Matrix
-          Multiplication in CUDA
+          {title}
         </Typography>
 
       
         <Typography sx={{ color: "text.secondary" }}>
-          Memory coalescing, shared memory tiling, and GPU
-          benchmarking strategies explained step-by-step.
+          {description}
         </Typography>
 
       
         <Typography variant="caption" sx={{ opacity: 0.7 }}>
-          Feb 26, 2026 • 12 min read
+          {convertTime(created_at)}
         </Typography>
 
        
         <Button
           variant="outlined"
+          onClick={()=>handleClick()}
           sx={{
             textTransform: "none",
             fontWeight: 600,

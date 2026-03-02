@@ -2,16 +2,16 @@
  * Method: POST
  * URL: /blogs
  * Example URL: /blogs
- * Body: Yes (title, content, cover_image)
+ * Body: Yes (title, content, cover_image,tag,description)
  * Params: No
  */
 
 const db=require("../../db")
 async function createBlog(req,res){
 
-    const {title,content,cover_image}=req.body
+    const {title,content,cover_image,tag,description}=req.body
 
-    if (!title  || !content || !cover_image){
+    if (!title  || !content || !cover_image || !tag || !description){
         return res.status(400).send({
             message:"Incomplete data"
         })
@@ -24,8 +24,8 @@ async function createBlog(req,res){
         .replace(/\s+/g, "-");
     
         const query={
-            text:"insert into blogs (title,slug,content,cover_image,is_published) values ($1 , $2 , $3 , $4, $5) returning *",
-            values:[title,slug,content,cover_image,false]
+            text:"insert into blogs (title,slug,content,cover_image,is_published,tag,description) values ($1 , $2 , $3 , $4, $5,$6, $7) returning *",
+            values:[title,slug,content,cover_image,false,tag,description]
         }
 
         try{

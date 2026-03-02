@@ -1,12 +1,31 @@
-import React from "react";
+import React,{useState,useEffect} from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CardInfo from "./Card";
 import Stack from "@mui/material/Stack";
 import Socials from "./Socials";
 import Grid from "@mui/material/Grid";
-
+import api from "../api/api";
 const Hero = () => {
+  const [blog,setBlog]=useState(null)
+ 
+  const [error,setError]=useState("")
+  useEffect(()=>{
+   const fetchBlogs =async()=>{
+     try {
+      const res=await api.get("/blogs/?page=1&limit=1")
+      const data=res.data
+     
+      setBlog(data.data[0])
+      } catch (error) {
+        console.log("error",error)
+        setError(error)
+      }
+   }
+   fetchBlogs()
+   
+  },[])
+
   return (
     <Grid
       container
@@ -96,7 +115,11 @@ const Hero = () => {
           mt: { xs: 4, md: 0 },
         }}
       >
-        <CardInfo />
+        {error ? (
+          <Typography>Error fetching blog</Typography>
+        ) : (
+          <CardInfo blog={blog} />
+        )}
       </Grid>
     </Grid>
   );
