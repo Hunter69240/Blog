@@ -1,75 +1,93 @@
-import  { useEffect, useState } from 'react'
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import CardInfo from './Card';
-import Grid from '@mui/material/Grid';
-import Pagination from '@mui/material/Pagination';
+import { useState } from "react";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import CardInfo from "./Card";
+import Grid from "@mui/material/Grid";
+import Pagination from "@mui/material/Pagination";
+import CircularProgress from "@mui/material/CircularProgress";
+import Alert from "@mui/material/Alert";
 
-import { getBlogs } from '../services/blogService';
+import { getBlogs } from "../services/blogService";
+import { useQuery } from "@tanstack/react-query";
+
 const Articles = () => {
+  const [page, setPage] = useState(1);
 
-  const [page,setPage]=useState(1)
-  const [blogs,setBlogs]=useState([])  
-  const [error,setError]=useState("")
-  const [totalPages,setTotalPages]=useState(1)
-  const [loading, setLoading] = useState(false);
-  const handlePageChange=(event,value)=>{
-    setPage(value)
-  }
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
 
-  useEffect(()=>{
-    const fetchBlogs = async() =>{
-        try {
-            setLoading(true)
-            const res=await getBlogs(page,4)
-            
-            setTotalPages(res.totalPages)
-            setBlogs(res.data)
-        } catch (error) {
-            console.log("Articles",error)
-            setError(error)
-        }finally{
-            setLoading(false)
-        }
-    }
-    fetchBlogs()
-  },[page])
+  const {
+    data,
+    error,
+    isLoading,
+    isFetching
+  } = useQuery({
+    queryKey: ["articles", page, 4],
+    queryFn: () => getBlogs(page, 4),
+    staleTime: Infinity,
+    keepPreviousData: true,
+  });
 
+  
   if (error) {
-    return <Typography align="center">Failed to fetch blogs</Typography>
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+        <Alert severity="error">Error fetching blogs</Alert>
+      </Box>
+    );
   }
 
-  if (loading) {
-    return <Typography align="center">Loading...</Typography>
+  
+  if (isLoading) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+        <CircularProgress />
+      </Box>
+    );
   }
+
   return (
-    <Box sx={{ maxWidth: { xs: "100%", sm: 900, md: 1200 }, mx: "auto", pt: 4 }}>
-       
-        <Grid container spacing={4} sx={{
-            pt:4
-        }}>
-            {blogs.map((blog)=>(
-                <Grid size={{xs:12, md:6}} 
-                sx={{
-                    display:"flex", justifyContent:'center'
-                }}
-                key={blog.slug}
-                > 
-                    <CardInfo blog={blog}/>
-                </Grid>
-            ))}
-           
-        </Grid>
-            
+    <Box
+      sx={{
+        maxWidth: { xs: "100%", sm: 900, md: 1200 },
+        mx: "auto",
+        pt: 4,
+      }}
+    >
+     
+      {isFetching && (
+        <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+          <CircularProgress size={24} />
+        </Box>
+      )}
 
-        <Pagination count={totalPages} size="large" page={page} onChange={handlePageChange} sx={{
-            display:'flex',
-            justifyContent:'center',
-            pt:7,
-            pb:5
-        }}/>
+      <Grid container spacing={4} sx={{ pt: 4 }}>
+        {data?.data?.map((blog) => (
+          <Grid
+            key={blog.slug}
+            size={{ xs: 12, md: 6 }}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
+            <CardInfo blog={blog} />
+          </Grid>
+        ))}
+      </Grid>
+
+      <Pagination
+        count={data?.totalPages}
+        size="large"
+        page={page}
+        onChange={handlePageChange}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          pt: 7,
+          pb: 5,
+        }}
+      />
     </Box>
-  )
-}
+  );
+};
 
-export default Articles
+export default Articles;

@@ -1,4 +1,3 @@
-import React,{useState,useEffect} from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CardInfo from "./Card";
@@ -6,22 +5,35 @@ import Stack from "@mui/material/Stack";
 import Socials from "./Socials";
 import Grid from "@mui/material/Grid";
 import { getBlogs } from "../services/blogService";
-const Hero = () => {
-  const [blog,setBlog]=useState(null)
- 
-  const [error,setError]=useState("")
-  useEffect(() => {
-    const fetchBlog = async () => {
-      try {
-        const res = await getBlogs(1, 1)
-        setBlog(res.data[0])
-      } catch (error) {
-        setError(error)
-      }
-    }
-    fetchBlog()
-  }, [])
+import { useQuery } from '@tanstack/react-query'
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 
+const Hero = () => {
+
+  const {data,error,isLoading}=useQuery({
+    queryKey:["blog",1,1],
+    queryFn:()=>getBlogs(1,1),
+    staleTime:Infinity,
+    keepPreviousData : true
+  })
+
+    if (isLoading) {
+      return (
+          <Box sx={{ display: 'flex' }}>
+              <CircularProgress />
+          </Box>
+      )
+    }
+    
+    if(error){
+      return (
+          <Box sx={{ display: 'flex' }}>
+              <Alert severity="error">Error fetching Blogs</Alert>
+          </Box>
+      )
+    }
+   
   return (
     <Grid
       container
@@ -111,11 +123,9 @@ const Hero = () => {
           mt: { xs: 4, md: 0 },
         }}
       >
-        {error ? (
-          <Typography>Error fetching blog</Typography>
-        ) : (
-          <CardInfo blog={blog} />
-        )}
+        
+      <CardInfo blog={data?.data[0]} />
+        
       </Grid>
     </Grid>
   );
