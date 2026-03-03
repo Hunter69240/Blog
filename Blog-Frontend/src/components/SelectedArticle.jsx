@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
-import { useNavigate,useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { MuiMarkdown } from 'mui-markdown';
 import { format } from "date-fns";
 import { getSelectedBlog } from '../services/blogService';
@@ -14,155 +14,133 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import TableOfContent from './TableOfContent';
 
-const SelectedArticle = () => {
-    const navigate=useNavigate()
-    const {slug}=useParams()
+const extractHeadings = (markdown = "") => {
+    if (!markdown) return []
+    return markdown
+        .split("\n")
+        .filter((line) => /^#{1,3}\s/.test(line))
+        .map((line) => {
+            const match = line.match(/^(#{1,3})\s+(.+)/)
+            if (!match) return null
+            const level = match[1].length
+            const text = match[2].trim()
+            const id = text.toLowerCase().replace(/\s+/g, "-").replace(/[^\w-]/g, "")
+            return { id, text, level }
+        })
+        .filter(Boolean)
+}
 
-    const theme=useTheme()
-    const isDesktop=useMediaQuery(theme.breakpoints.up("md"))
-    
-    const {data,error,isLoading}=useQuery({
-        queryKey:["blog",slug],
-        queryFn:()=> getSelectedBlog(slug),
-        staleTime:600000    
+const SelectedArticle = () => {
+    const navigate = useNavigate()
+    const { slug } = useParams()
+
+    const theme = useTheme()
+    const isDesktop = useMediaQuery(theme.breakpoints.up("md"))
+
+    const { data, error, isLoading } = useQuery({
+        queryKey: ["blog", slug],
+        queryFn: () => getSelectedBlog(slug),
+        staleTime: 600000
     })
 
-    const handleClick = ()=>{
-        navigate("/")
+    const headings = useMemo(() => extractHeadings(data?.blog?.content), [data?.blog?.content])
+
+    const handleClick = () => navigate("/")
+
+    if (error) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <Alert severity="error">Error fetching Blog</Alert>
+            </Box>
+        )
     }
 
-    if(error){
-      return (
-          <Box sx={{ display: 'flex' }}>
-              <Alert severity="error">Error fetching Blogs</Alert>
-          </Box>
-      )
-    }
     if (isLoading) {
         return (
-            <Box sx={{ display: 'flex' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
                 <CircularProgress />
             </Box>
         )
     }
-    const {id,title,tag,content,cover_image,created_at}= data.blog
+
+    if (!data?.blog) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <Alert severity="warning">Blog not found</Alert>
+            </Box>
+        )
+    }
+
+    const { title = "", tag = "", content = "", created_at } = data.blog
+
     return (
-    <Stack
-    direction="row"
-    >
-        <Stack>
-            <TableOfContent isDesktop={isDesktop}/>
-        </Stack>
+        <Stack direction="row" sx={{ px: { xs: 1, md: 4 }, py: 4 }}>
 
-        <Box
-        sx={(theme) => ({
-            bgcolor:
-            theme.palette.mode === "dark" ? "#0B1120" : "#ffffff",
-            width: "100%",
-            maxWidth: "1000px",
-            mx:"auto",
-        
-            borderRadius: 3,
-            overflow: "hidden",
-        
-            px:2,
-            pt:4,
-            pb:5,
-            border:
-            theme.palette.mode === "light"
-                ? `1px solid ${theme.palette.divider}`
-                : "none",
+            <TableOfContent isDesktop={isDesktop} headings={headings} />
 
-        
-            boxShadow:
-            theme.palette.mode === "light"
-                ? "0 4px 20px rgba(0,0,0,0.04)"
-                : "none",
-
-            transition: "transform 0.3s ease, box-shadow 0.3s ease",
-
-            
-        })}
-        >   
-            
-            <Stack spacing={5}>
-                <Button sx={{
-                    justifyContent:"flex-start"
-                }}
-                onClick={handleClick}>
-                    ← Back to Articles
-                </Button>
-
-                <Typography
-                sx={{
-                color: "primary.main",
-                fontWeight: 600,
-            }}
-                >
-                Tag: [ {tag} ]
-                </Typography>
-
-                <Typography variant="h2" sx={{ fontWeight: 700 }}>
-                {title}
-                </Typography>
-
-                <Typography
-                sx={{
-                    opacity:0.6,
-                    fontSize:"14px"
-                }}
-                >
-                    {created_at && format(new Date(created_at), "dd MMM yyyy • hh:mm a")}
-                </Typography>
-
-                <Box
-                component="img"
-                src="/Warframe0000.jpg"
-                alt={title}
-                sx={{
+            <Box
+                sx={(theme) => ({
+                    bgcolor: theme.palette.mode === "dark" ? "#0B1120" : "#ffffff",
                     width: "100%",
+                    maxWidth: "1000px",
+                    mx: "auto",
                     borderRadius: 3,
-                }}
-                />
+                    overflow: "hidden",
+                    px: 2,
+                    pt: 4,
+                    pb: 5,
+                    border: theme.palette.mode === "light"
+                        ? `1px solid ${theme.palette.divider}`
+                        : "none",
+                    boxShadow: theme.palette.mode === "light"
+                        ? "0 4px 20px rgba(0,0,0,0.04)"
+                        : "none",
+                    transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                })}
+            >
+                <Stack spacing={5}>
+                    <Button sx={{ justifyContent: "flex-start" }} onClick={handleClick}>
+                        ← Back to Articles
+                    </Button>
 
-                <Box
-                sx={{
-                    mt:2,
-                    "& h1": { fontSize: "36px", mt: 4, mb: 2 },
-                    "& h2": {
-                        fontSize: "28px",
-                        fontWeight: 700,
-                        mt: 5,
-                        mb: 2,
-                        },
-                    "& h3": { fontSize: "22px", mt: 3, mb: 1.5 },
-                    "& p": {
-                        fontSize: "18px",
-                        lineHeight: 1.9,
-                        color: "text.primary",
-                        
-                        },
-                    "& ul": { pl: 3 },
-                    "& li": { mb: 1 },
-                    "& pre": {
-                        backgroundColor: "#0f172a",
-                        padding: 2,
-                        borderRadius: 2,
-                        overflowX: "auto",
-                        },
-                        "& code": {
-                        fontFamily: "monospace",
-                        },
-                    }}
+                    <Typography sx={{ color: "primary.main", fontWeight: 600 }}>
+                        Tag: [ {tag} ]
+                    </Typography>
+
+                    <Typography variant="h2" sx={{ fontWeight: 700 }}>
+                        {title}
+                    </Typography>
+
+                    <Typography sx={{ opacity: 0.6, fontSize: "14px" }}>
+                        {created_at && format(new Date(created_at), "dd MMM yyyy • hh:mm a")}
+                    </Typography>
+
+                    <Box
+                        component="img"
+                        src="/Warframe0000.jpg"
+                        alt={title}
+                        sx={{ width: "100%", borderRadius: 3 }}
+                    />
+
+                    <Box
+                        sx={{
+                            mt: 2,
+                            "& h1": { fontSize: "36px", mt: 4, mb: 2 },
+                            "& h2": { fontSize: "28px", fontWeight: 700, mt: 5, mb: 2 },
+                            "& h3": { fontSize: "22px", mt: 3, mb: 1.5 },
+                            "& p": { fontSize: "18px", lineHeight: 1.9, color: "text.primary" },
+                            "& ul": { pl: 3 },
+                            "& li": { mb: 1 },
+                            "& pre": { backgroundColor: "#0f172a", padding: 2, borderRadius: 2, overflowX: "auto" },
+                            "& code": { fontFamily: "monospace" },
+                        }}
                     >
-                    <MuiMarkdown>
-                        {content}
-                    </MuiMarkdown>
-                </Box>
-            </Stack>
-        </Box>
-    </Stack>
-  )
+                        <MuiMarkdown>{content}</MuiMarkdown>
+                    </Box>
+                </Stack>
+            </Box>
+        </Stack>
+    )
 }
 
 export default SelectedArticle
