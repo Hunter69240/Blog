@@ -4,31 +4,14 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import { useNavigate } from 'react-router-dom';
-const convertTime = (time) => {
-  if (!time) return "—";
+import { format } from "date-fns";
 
-  const date = new Date(time);
 
-  const formattedDate = date.toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    timeZone: "Asia/Kolkata"
-  });
-
-  const formattedTime = date.toLocaleTimeString("en-IN", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "Asia/Kolkata"
-  });
-
-  return `${formattedDate} • ${formattedTime}`;
-};
 
 
 const CardInfo = ({blog}) => {
   const navigate = useNavigate();
+  
   if (!blog) return null
   const {id,title,slug,cover_image,created_at,tag,description}=blog
   
@@ -128,7 +111,7 @@ const CardInfo = ({blog}) => {
 
       
         <Typography variant="caption" sx={{ opacity: 0.7 }}>
-          {convertTime(created_at)}
+          {created_at && format(new Date(created_at), "dd MMM yyyy • hh:mm a")}
         </Typography>
 
        

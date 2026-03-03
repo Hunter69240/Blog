@@ -5,29 +5,9 @@ import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { useNavigate,useParams } from 'react-router-dom';
 import { MuiMarkdown } from 'mui-markdown';
-
+import { format } from "date-fns";
 import { getSelectedBlog } from '../services/blogService';
-const convertTime = (time) => {
-  if (!time) return "—";
 
-  const date = new Date(time);
-
-  const formattedDate = date.toLocaleDateString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    timeZone: "Asia/Kolkata"
-  });
-
-  const formattedTime = date.toLocaleTimeString("en-IN", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "Asia/Kolkata"
-  });
-
-  return `${formattedDate} • ${formattedTime}`;
-};
 
 const SelectedArticle = () => {
     const navigate=useNavigate()
@@ -116,7 +96,7 @@ const SelectedArticle = () => {
                 fontSize:"14px"
             }}
             >
-               {convertTime(created_at)}
+                {created_at && format(new Date(created_at), "dd MMM yyyy • hh:mm a")}
             </Typography>
 
             <Box
