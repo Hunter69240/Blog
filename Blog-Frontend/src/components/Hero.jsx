@@ -5,26 +5,22 @@ import CardInfo from "./Card";
 import Stack from "@mui/material/Stack";
 import Socials from "./Socials";
 import Grid from "@mui/material/Grid";
-import api from "../api/api";
+import { getBlogs } from "../services/blogService";
 const Hero = () => {
   const [blog,setBlog]=useState(null)
  
   const [error,setError]=useState("")
-  useEffect(()=>{
-   const fetchBlogs =async()=>{
-     try {
-      const res=await api.get("/blogs/?page=1&limit=1")
-      const data=res.data
-     
-      setBlog(data.data[0])
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        const res = await getBlogs(1, 1)
+        setBlog(res.data[0])
       } catch (error) {
-        console.log("error",error)
         setError(error)
       }
-   }
-   fetchBlogs()
-   
-  },[])
+    }
+    fetchBlog()
+  }, [])
 
   return (
     <Grid

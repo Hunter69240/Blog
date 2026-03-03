@@ -4,8 +4,9 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import { useNavigate,useParams } from 'react-router-dom';
-import api from '../api/api';
 import { MuiMarkdown } from 'mui-markdown';
+
+import { getSelectedBlog } from '../services/blogService';
 const convertTime = (time) => {
   if (!time) return "—";
 
@@ -36,22 +37,22 @@ const SelectedArticle = () => {
     
     useEffect(() => {
      window.scrollTo(0, 0)
-    const fetchBlog = async (slug)=>{
+    const fetchBlog = async ()=>{
         try {
-            const res=await api.get(`/blogs/${slug}`)
-            const data=res.data
-            console.log(data.blog)
-            setBlog(data.blog)
+            const res=await getSelectedBlog(slug)
+            setBlog(res.blog)
         } catch (error) {
-            console.log("Selected article",error)
             setError(error)
         }
     }
-    fetchBlog(slug)
+    fetchBlog()
     }, [slug])
 
     const handleClick = ()=>{
         navigate("/")
+    }
+    if (error){
+        return <Typography align="center">Error loading article</Typography>
     }
     if (!blog){
         return <Typography align="center">Loading...</Typography>
@@ -87,12 +88,7 @@ const SelectedArticle = () => {
 
         
       })}
-    >   
-        {error && 
-        <Typography>
-            {error}    
-        </Typography>}
-
+    >
         <Stack spacing={5}>
             <Button sx={{
                 justifyContent:"flex-start"
@@ -148,9 +144,9 @@ const SelectedArticle = () => {
                     fontSize: "18px",
                     lineHeight: 1.9,
                     color: "text.primary",
-                    mb: 2.5,
+                    
                     },
-                "& ul": { pl: 3, mb: 2 },
+                "& ul": { pl: 3 },
                 "& li": { mb: 1 },
                 "& pre": {
                     backgroundColor: "#0f172a",

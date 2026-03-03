@@ -4,7 +4,8 @@ import Typography from '@mui/material/Typography';
 import CardInfo from './Card';
 import Grid from '@mui/material/Grid';
 import Pagination from '@mui/material/Pagination';
-import api from '../api/api';
+
+import { getBlogs } from '../services/blogService';
 const Articles = () => {
 
   const [page,setPage]=useState(1)
@@ -20,10 +21,10 @@ const Articles = () => {
     const fetchBlogs = async() =>{
         try {
             setLoading(true)
-            const res=await api.get(`/blogs/?page=${page}&limit=4`)
-            const data=res.data
-            setTotalPages(data.totalPages)
-            setBlogs(data.data)
+            const res=await getBlogs(page,4)
+            
+            setTotalPages(res.totalPages)
+            setBlogs(res.data)
         } catch (error) {
             console.log("Articles",error)
             setError(error)
@@ -33,17 +34,17 @@ const Articles = () => {
     }
     fetchBlogs()
   },[page])
+
+  if (error) {
+    return <Typography align="center">Failed to fetch blogs</Typography>
+  }
+
+  if (loading) {
+    return <Typography align="center">Loading...</Typography>
+  }
   return (
     <Box sx={{ maxWidth: { xs: "100%", sm: 900, md: 1200 }, mx: "auto", pt: 4 }}>
        
-
-        {error && (
-            <Typography align="center" color="error" sx={{ mt: 2 }}>
-                Failed to fetch blogs
-            </Typography>
-        )}
-
-        {loading && <Typography align="center">Loading...</Typography>}
         <Grid container spacing={4} sx={{
             pt:4
         }}>

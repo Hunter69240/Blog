@@ -94,7 +94,7 @@ const CardInfo = ({blog}) => {
         >
           <Box
             component="img"
-            src={cover_image}
+            src="/Warframe0000.jpg"
             alt="Card image"
             sx={{
               width: "100%",
