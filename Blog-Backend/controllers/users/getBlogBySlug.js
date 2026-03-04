@@ -1,12 +1,12 @@
 /*
  * Method: GET
  * URL: /blogs/:slug
- * Example URL: /blogs/my-first-blog
  */
 
 const prisma = require("../../lib/prisma");
 
 async function getBlogBySlug(req, res) {
+
   const { slug } = req.params;
 
   try {
@@ -33,13 +33,19 @@ async function getBlogBySlug(req, res) {
       });
     }
 
+    const words = result.content.split(/\s+/).length;
+    const readingTime = Math.ceil(words / 200);
+
     return res.status(200).json({
       success: true,
-      blog: result
+      blog: result,
+      readingTime
     });
 
   } catch (err) {
+
     console.error("getBlogBySlug error", err);
+
     return res.status(500).json({
       success: false,
       message: "Error fetching blog"

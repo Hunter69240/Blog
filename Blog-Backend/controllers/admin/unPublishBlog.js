@@ -1,41 +1,52 @@
 /*
  * Method: PATCH
- * URL: /blogs/:id/unpublish
- * Example URL: /blogs/1/unpublish
- * Body: No
- * Params: Yes (id)
+ * URL: /blogs/:id/publish
  */
 
-const db=require("../../db")
+const prisma = require("../../lib/prisma");
 
-async function unPublishBlog(req,res){
-   
-    const {id}=req.params
-    try{
-        const query={
-            text:"update blogs set is_published=false where id=$1 and is_published=true returning *",
-            values:[id]
-        }
-        const result =await db.query(query)
+async function unpublishBlog(req, res) {
+  const id = parseInt(req.params.id);
 
-        if (result.rows.length === 0){
-            return res.status(400).json({
-                success: false,
-                message: "Blog not found or already in draft"
-            });
-        }
-        return res.status(200).json({
-            success:true,
-            message:"Unpublished blog",
-            blog:result.rows[0]
-        })
-    }catch(err){
-        console.log("unPublishBlog error ",err)
-        return res.status(500).json({
-            success:false,
-            message:"Error taking down blog"
-        })
-    }   
+  if (isNaN(id)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid blog id"
+    });
+  }
+  try {
+
+    const result = await prisma.blog.updateMany({
+      where: {
+        id,
+        isPublished: true
+      },
+      data: {
+        isPublished: false
+      }
+    });
+
+    if (result.count === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found or already un-published"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Unpublished blog"
+    });
+
+  } catch (err) {
+
+    console.log("UnpublishBlog error", err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Error Unpublishing blog"
+    });
+  }
 }
 
-module.exports=unPublishBlog
+module.exports = unpublishBlog;

@@ -1,65 +1,52 @@
+/*
+ * Method: GET
+ * URL: /blogs/:slug
+ * Example URL: /blogs/my-first-blog
+ */
+
 const prisma = require("../../lib/prisma");
 
-async function getAllBlogs(req, res) {
-  let page = parseInt(req.query.page);
-  let limit = parseInt(req.query.limit);
-  const tag = req.query.tag;
-
-  const validTags = ["systems", "cuda", "algorithms"];
-
-  if (isNaN(page) || page < 1) page = 1;
-  if (isNaN(limit) || limit < 1) limit = 10;
-  if (limit > 50) limit = 50;
-
-  const offset = (page - 1) * limit;
+async function getBlogBySlug(req, res) {
+  const { slug } = req.params;
 
   try {
 
-    if (tag && !validTags.includes(tag)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid tag",
-      });
-    }
-
-    const where = {
-      isPublished: true,
-      ...(tag && { tag })
-    };
-
-    const total = await prisma.blog.count({ where });
-
-    const blogs = await prisma.blog.findMany({
-      where,
+    const result = await prisma.blog.findFirst({
+      where: {
+        slug,
+        isPublished: true
+      },
       select: {
         id: true,
         title: true,
-        slug: true,
-        coverImage: true,
-        createdAt: true,
         tag: true,
-        description: true
-      },
-      orderBy: { createdAt: "desc" },
-      take: limit,
-      skip: offset
+        content: true,
+        coverImage: true,
+        createdAt: true
+      }
+    });
+    const words=result.content.split(/\s+/).length
+    const readingTime = Math.ceil(words / 200);
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "Blog doesn't exist"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      blog: result,
+      readingTime:readingTime
     });
 
-    res.status(200).json({
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
-      data: blogs
-    });
-
-  } catch (error) {
-    console.log("getAllBlogs error", error);
-    res.status(500).json({
+  } catch (err) {
+    console.error("getBlogBySlug error", err);
+    return res.status(500).json({
       success: false,
-      message: "Error viewing blogs",
+      message: "Error fetching blog"
     });
   }
 }
 
-module.exports = getAllBlogs;
+module.exports = getBlogBySlug;

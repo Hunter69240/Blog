@@ -1,55 +1,62 @@
 /*
  * Method: POST
  * URL: /blogs
- * Example URL: /blogs
- * Body: Yes (title, content, cover_image,tag,description)
- * Params: No
+ * Body: Yes (title, content, cover_image, tag, description)
  */
 
-const db=require("../../db")
-async function createBlog(req,res){
+const prisma = require("../../lib/prisma");
 
-    const {title,content,cover_image,tag,description}=req.body
+async function createBlog(req, res) {
 
-    if (!title  || !content || !cover_image || !tag || !description){
-        return res.status(400).send({
-            message:"Incomplete data"
-        })
+  const { title, content, cover_image, tag, description } = req.body;
+
+  if (!title || !content || !cover_image || !tag || !description) {
+    return res.status(400).json({
+      message: "Incomplete data"
+    });
+  }
+
+  const slug = title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9 ]/g, "")
+    .replace(/\s+/g, "-");
+
+  try {
+
+    const result = await prisma.blog.create({
+      data: {
+        title,
+        slug,
+        content,
+        coverImage: cover_image,
+        isPublished: false,
+        tag,
+        description
+      }
+    });
+
+    return res.status(201).json({
+      success: true,
+      id: result.id
+    });
+
+  } catch (error) {
+
+    console.log("Inside createBlog catch", error);
+
+    if (error.code === "P2002") {
+      return res.status(400).json({
+        success: false,
+        message: "Blog with slug already exists"
+      });
     }
 
-    const slug = title
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9 ]/g, "")
-        .replace(/\s+/g, "-");
-    
-        const query={
-            text:"insert into blogs (title,slug,content,cover_image,is_published,tag,description) values ($1 , $2 , $3 , $4, $5,$6, $7) returning *",
-            values:[title,slug,content,cover_image,false,tag,description]
-        }
-
-        try{
-            const result=await db.query(query)
-
-            
-            return res.status(201).json({
-                success:true,
-                id:result.rows[0].id
-            })
-        }catch(error){
-            console.log("Inside createBlog catch",error)
-            if(error.code === "23505"){
-                return res.status(400).json({
-                    success:false,
-                    message:"Blog with slug already exists"
-                })
-            }
-            return res.status(500).json({
-                success:false,
-                message:"Error uploading blog"
-            })
-        }
-    
+    return res.status(500).json({
+      success: false,
+      message: "Error uploading blog"
+    });
+  }
 }
 
-module.exports=createBlog
+module.exports = createBlog;
