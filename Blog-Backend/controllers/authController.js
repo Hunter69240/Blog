@@ -5,69 +5,67 @@
  * Params: No
  */
 
-const db=require("../db")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const prisma = require("../lib/prisma");
 
-async function login(req,res){
-    const email=req.body.email.trim()
-    const password=req.body.password
+async function login(req, res) {
+  const email = req.body.email?.trim();
+  const password = req.body.password;
 
+  if (!email || !password) {
+    return res.status(400).send({
+      message: "Email or password missing"
+    });
+  }
+
+  try {
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        email: true,
+        passwordHash: true
+      }
+    });
     
-    if(!email || !password){
-       res.status(400).send({
-            message:"Email or password missing"
-       })
-       return
+    if (!user) {
+      return res.status(401).send({
+        message: "Invalid credentials - line 36"
+      });
     }
 
-    const query = {
-    text: 'SELECT * FROM users WHERE email = $1',
-    values: [email],
+    const isMatch = await bcrypt.compare(password, user.passwordHash);
+
+    if (!isMatch) {
+      return res.status(401).send({
+        message: "Invalid credentials - line 44"
+      });
+    }
+
+    const payload = {
+      id: user.id,
+      email: user.email
     };
 
-    try {
-        
-        const result = await db.query(query);
-        
-        
-        if (result.rows.length === 0){
-            res.status(401).send({
-            message:"Invalid credentials"
-            })
-            return
-        }
-        const user=result.rows[0]
-        const hashedPassword=user.password_hash
-        
-        const isMatch=await bcrypt.compare(password,hashedPassword);
+    const token = jwt.sign(
+      payload,
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRES_IN }
+    );
 
-        if(! isMatch){
-             res.status(401).send({
-            message:"Invalid password"
-            })
-            return
-        }
+    return res.send({
+      message: "Login successful",
+      token
+    });
 
-        const payload={
-            id:user.id,
-            email:email,
-            
-        }
-
-        const secretKey=process.env.JWT_SECRET
-        const options = { expiresIn: process.env.JWT_EXPIRES_IN }
-
-        const token=jwt.sign(payload,secretKey,options)
-        res.send({
-            message:"Login successful",
-            token:token,
-        })
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: "authController - 53 Internal server error" });
-    }
-
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Internal server error"
+    });
+  }
 }
 
-module.exports=login
+module.exports = login;

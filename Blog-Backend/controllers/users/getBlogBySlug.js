@@ -2,40 +2,49 @@
  * Method: GET
  * URL: /blogs/:slug
  * Example URL: /blogs/my-first-blog
- * Body: No
- * Params: Yes (slug)
  */
 
-const db=require("../../db")
+const prisma = require("../../lib/prisma");
 
-async function getBlogBySlug(req,res){
-    const {slug}=req.params
-    const query= {
-        text:"select id,title,tag,content,cover_image,created_at from blogs where slug = $1 and is_published=true",
-        values:[slug]
-    }
-    try{
-        const {rows,rowCount} =await db.query(query);
-        if(rowCount === 0){
-            return res.status(404).json({
-                success:false,
-                message:"Blog doesnt exist"
-            })
-        }
+async function getBlogBySlug(req, res) {
+  const { slug } = req.params;
 
-        return res.status(200).json({
-            success:true,
-            blog:rows[0]
-        })
-    }catch(err){
-        console.error("getBlogBySlug error",err);
-        return res.status(500).json({
-            success:false,
-            message:"Error fetching blog"
-        })
+  try {
+
+    const result = await prisma.blog.findFirst({
+      where: {
+        slug,
+        isPublished: true
+      },
+      select: {
+        id: true,
+        title: true,
+        tag: true,
+        content: true,
+        coverImage: true,
+        createdAt: true
+      }
+    });
+
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: "Blog doesn't exist"
+      });
     }
-    
-    
+
+    return res.status(200).json({
+      success: true,
+      blog: result
+    });
+
+  } catch (err) {
+    console.error("getBlogBySlug error", err);
+    return res.status(500).json({
+      success: false,
+      message: "Error fetching blog"
+    });
+  }
 }
 
-module.exports=getBlogBySlug
+module.exports = getBlogBySlug;

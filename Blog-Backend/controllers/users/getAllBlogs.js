@@ -1,4 +1,4 @@
-const db = require("../../db");
+const prisma = require("../../lib/prisma");
 
 async function getAllBlogs(req, res) {
   let page = parseInt(req.query.page);
@@ -14,6 +14,7 @@ async function getAllBlogs(req, res) {
   const offset = (page - 1) * limit;
 
   try {
+
     if (tag && !validTags.includes(tag)) {
       return res.status(400).json({
         success: false,
@@ -21,55 +22,37 @@ async function getAllBlogs(req, res) {
       });
     }
 
-    let totalResult;
-    let result;
+    const where = {
+      isPublished: true,
+      ...(tag && { tag })
+    };
 
-    if (tag) {
-      totalResult = await db.query(
-        "SELECT COUNT(*) FROM blogs WHERE is_published = true AND tag = $1",
-        [tag]
-      );
+    const total = await prisma.blog.count({ where });
 
-      result = await db.query(
-        `SELECT id, title, slug,
-                SUBSTRING(content, 1, 200) AS excerpt,
-                cover_image,
-                created_at,
-                tag
-         FROM blogs
-         WHERE is_published = true AND tag = $1
-         ORDER BY created_at DESC
-         LIMIT $2 OFFSET $3`,
-        [tag, limit, offset]
-      );
-    } else {
-      totalResult = await db.query(
-        "SELECT COUNT(*) FROM blogs WHERE is_published = true"
-      );
-
-      result = await db.query(
-        `SELECT id, title, slug,
-                cover_image,
-                created_at,
-                tag,
-                description
-         FROM blogs
-         WHERE is_published = true
-         ORDER BY created_at DESC
-         LIMIT $1 OFFSET $2`,
-        [limit, offset]
-      );
-    }
-
-    const total = parseInt(totalResult.rows[0].count);
+    const blogs = await prisma.blog.findMany({
+      where,
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        coverImage: true,
+        createdAt: true,
+        tag: true,
+        description: true
+      },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      skip: offset
+    });
 
     res.status(200).json({
       page,
       limit,
       total,
       totalPages: Math.ceil(total / limit),
-      data: result.rows,
+      data: blogs
     });
+
   } catch (error) {
     console.log("getAllBlogs error", error);
     res.status(500).json({
