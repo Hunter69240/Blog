@@ -10,6 +10,7 @@ const updateBlog=require("../controllers/admin/updateBlog")
 const publishBlog=require("../controllers/admin/publishBlog")
 const unPublishBlog=require("../controllers/admin/unPublishBlog")
 const getAdminBlogs=require("../controllers/admin/getAllBlogs.js")
+const getAdminBlogBySlug=require("../controllers/admin/getBlogBySlug.js")
 router.post(
     "/login",
     login
@@ -34,6 +35,11 @@ router.get(
     getAdminBlogs
 )
 
+router.get(
+    "/admin/blogs/:slug",
+    requireUser,
+    getAdminBlogBySlug
+)
 router.post(
     "/blogs",
     requireUser,

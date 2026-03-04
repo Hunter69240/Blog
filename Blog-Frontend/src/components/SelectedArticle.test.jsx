@@ -53,7 +53,7 @@ describe("SelectedArticle ",()=>{
                     title:"test",
                     tag:'test tag',
                     content:"test content",
-                    created_at:"2026-03-02 12:33:25.300714"
+                    createdAt:"2026-03-02 12:33:25.300714"
                 }
             },
             error:false,
@@ -85,7 +85,7 @@ describe("SelectedArticle ",()=>{
                     title:"test",
                     tag:'test tag',
                     content:"test content",
-                    created_at:"2026-03-02 12:33:25.300714"
+                    createdAt:"2026-03-02 12:33:25.300714"
                 }
             },
             error:false,

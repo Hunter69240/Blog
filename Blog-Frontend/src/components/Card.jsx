@@ -13,7 +13,7 @@ const CardInfo = ({blog}) => {
   const navigate = useNavigate();
   
   if (!blog) return null
-  const {id,title,slug,cover_image,created_at,tag,description}=blog
+  const {id,title,slug,coverImage,createdAt,tag,description}=blog
   
 
   const handleClick = ()=>{
@@ -111,7 +111,7 @@ const CardInfo = ({blog}) => {
 
       
         <Typography variant="caption" sx={{ opacity: 0.7 }}>
-          {created_at && format(new Date(created_at), "dd MMM yyyy • hh:mm a")}
+          {createdAt && format(new Date(createdAt), "dd MMM yyyy • hh:mm a")}
         </Typography>
 
        

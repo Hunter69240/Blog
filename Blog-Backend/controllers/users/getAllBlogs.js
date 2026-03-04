@@ -1,52 +1,72 @@
 /*
  * Method: GET
- * URL: /blogs/:slug
- * Example URL: /blogs/my-first-blog
+ * URL: /blogs
+ * Example: /blogs?page=1&limit=4
  */
 
 const prisma = require("../../lib/prisma");
 
-async function getBlogBySlug(req, res) {
-  const { slug } = req.params;
-
+async function getAllBlogs(req, res) {
   try {
 
-    const result = await prisma.blog.findFirst({
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 4;
+
+    const skip = (page - 1) * limit;
+
+    const blogs = await prisma.blog.findMany({
       where: {
-        slug,
         isPublished: true
       },
       select: {
         id: true,
         title: true,
+        slug: true,
         tag: true,
-        content: true,
+        description: true,
         coverImage: true,
-        createdAt: true
+        createdAt: true,
+        content:true
+      },
+      orderBy: {
+        createdAt: "desc"
+      },
+      skip: skip,
+      take: limit
+    });
+
+    const totalBlogs = await prisma.blog.count({
+      where: {
+        isPublished: true
       }
     });
-    const words=result.content.split(/\s+/).length
-    const readingTime = Math.ceil(words / 200);
-    if (!result) {
-      return res.status(404).json({
-        success: false,
-        message: "Blog doesn't exist"
-      });
-    }
+
+    const totalPages = Math.ceil(totalBlogs / limit);
+
+    const blogsWithReadingTime = blogs.map((blog) => {
+      const words = blog.content.split(/\s+/).length;
+      const readingTime = Math.ceil(words / 200);
+
+      return {
+        ...blog,
+        readingTime
+      };
+    });
 
     return res.status(200).json({
       success: true,
-      blog: result,
-      readingTime:readingTime
+      blogs: blogsWithReadingTime,
+      totalPages: totalPages
     });
 
   } catch (err) {
-    console.error("getBlogBySlug error", err);
+    console.error("getAllBlogs error", err);
+
     return res.status(500).json({
       success: false,
-      message: "Error fetching blog"
+      message: "Error fetching blogs"
     });
   }
 }
 
-module.exports = getBlogBySlug;
+module.exports = getAllBlogs;

@@ -56,7 +56,7 @@ const SelectedArticle = () => {
         )
     }
 
-    const { title = "", tag = "", content = "", created_at } = data.blog
+    const { title = "", tag = "", content = "", createdAt } = data.blog
 
     return (
         <Stack direction="row" sx={{ px: { xs: 1, md: 4 }, py: 4 }}>
@@ -97,7 +97,7 @@ const SelectedArticle = () => {
                     </Typography>
 
                     <Typography sx={{ opacity: 0.6, fontSize: "14px" }}>
-                        {created_at && format(new Date(created_at), "dd MMM yyyy • hh:mm a")}
+                        {createdAt && format(new Date(createdAt), "dd MMM yyyy • hh:mm a")}
                     </Typography>
 
                     <Box

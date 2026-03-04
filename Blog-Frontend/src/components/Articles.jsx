@@ -63,7 +63,7 @@ const Articles = () => {
       )}
 
       <Grid container spacing={4} sx={{ pt: 4 }}>
-        {data?.data?.map((blog) => (
+        {data?.blogs?.map((blog) => (
           <Grid
             key={blog.slug}
             size={{ xs: 12, md: 6 }}
