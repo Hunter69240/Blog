@@ -41,25 +41,25 @@ router.get(
     getAdminBlogBySlug
 )
 router.post(
-    "/blogs",
+    "/admin/blogs",
     requireUser,
     createBlog
 )
 
 router.patch(
-    "/blogs/:id",
+    "/admin/blogs/:id",
     requireUser,
     updateBlog
 )
 
 router.patch(
-    "/blogs/:id/publish",
+    "/admin/blogs/:id/publish",
     requireUser,
     publishBlog
 )
 
 router.patch(
-    "/blogs/:id/unpublish",
+    "/admin/blogs/:id/unpublish",
     requireUser,
     unPublishBlog
 )
