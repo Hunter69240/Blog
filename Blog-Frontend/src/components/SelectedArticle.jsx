@@ -56,7 +56,7 @@ const SelectedArticle = () => {
         )
     }
 
-    const { title = "", tag = "", content = "", createdAt } = data.blog
+    const { title = "", tag = "", content = "", createdAt ,coverImage} = data.blog
 
     return (
         <Stack direction="row" sx={{ px: { xs: 1, md: 4 }, py: 4 }}>
@@ -102,7 +102,7 @@ const SelectedArticle = () => {
 
                     <Box
                         component="img"
-                        src="/Warframe0000.jpg"
+                        src={coverImage}
                         alt={title}
                         sx={{ width: "100%", borderRadius: 3 }}
                     />

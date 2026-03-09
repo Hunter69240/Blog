@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { useMutation,useQuery, useQueryClient } from "@tanstack/react-query";
 import { publishBlogs } from "../services/adminServices";
 import { unPublishBlogs } from "../services/adminServices";
+
 const AdminCard = ({blog}) => {
   
   const navigate = useNavigate();
@@ -18,6 +19,10 @@ const AdminCard = ({blog}) => {
 
   const handleClick = () => {
     navigate(`/blog/${slug}`)
+  }
+
+  const handleEdit=()=>{
+    navigate(`/admin/edit/${id}`,{state:blog})
   }
 
   const {mutate:publish}=useMutation({
@@ -121,6 +126,9 @@ const AdminCard = ({blog}) => {
             }}
           >
             → Read Article
+          </Button>
+          <Button variant="outlined" onClick={handleEdit}>
+            Edit
           </Button>
           {isPublished ?
             <Button variant="outlined" color="warning" onClick={handleUnPublish}>

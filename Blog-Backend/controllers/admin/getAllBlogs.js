@@ -23,7 +23,8 @@ async function getAllBlogs(req, res) {
         createdAt: true,
         tag: true,
         description: true,
-        isPublished:true
+        isPublished:true,
+        content:true
       },
       orderBy: { createdAt: "desc" },
       take: limit,

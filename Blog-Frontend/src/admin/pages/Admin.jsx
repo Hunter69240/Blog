@@ -21,7 +21,7 @@ const Admin = ({mode,setMode}) => {
            <Sidebar view={view} setView={setView}/>
            <Divider orientation='vertical' flexItem/>
           {view == "view" && <ViewBlog/>}
-          {view == "create" && <CreateBlog/>}
+          {view == "create" && <CreateBlog />}
       </Box>
      
     </div>

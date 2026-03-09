@@ -1,4 +1,4 @@
-import api from "../api/adminApi"
+import {api,imageApi} from "../api/adminApi"
 
 export const LoginFunc = async (email,password)=>{
     try{
@@ -45,6 +45,32 @@ export const unPublishBlogs = async(id)=>{
         return res.data
     }catch(error){
         console.log("Un-PublishError",error)
+        throw error
+    }
+}
+
+
+export const uploadImage = async (file) => {
+    try {
+        const formData = new FormData()
+        formData.append("file", file)
+        formData.append("upload_preset", import.meta.env.VITE_IMAGE_UPLOAD_PRESET)
+
+        const data = await imageApi(formData)
+        return data.secure_url 
+
+    } catch (error) {
+        console.log("uploadImage", error)
+        throw error
+    }
+}
+
+export const createBlog = async (payload)=>{
+    try{
+        const res=await api.post(`/blogs`, payload)
+        return res.data
+    }catch(error){
+        console.log("createBlog",error)
         throw error
     }
 }
