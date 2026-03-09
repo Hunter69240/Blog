@@ -7,10 +7,15 @@ const prisma = require("../../lib/prisma");
 
 async function publishBlog(req, res) {
   const id = parseInt(req.params.id);
-
+  if (isNaN(id)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid blog id"
+    });
+  }
   try {
-
-    const result = await prisma.blog.updateMany({
+    
+    const blog = await prisma.blog.update({
       where: {
         id,
         isPublished: false
@@ -20,16 +25,11 @@ async function publishBlog(req, res) {
       }
     });
 
-    if (result.count === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Blog not found or already published"
-      });
-    }
-
     return res.status(200).json({
       success: true,
-      message: "Published blog"
+      message: "Published blog",
+      blog:blog
+      
     });
 
   } catch (err) {

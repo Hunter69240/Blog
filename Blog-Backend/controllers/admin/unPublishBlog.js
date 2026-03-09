@@ -16,7 +16,7 @@ async function unpublishBlog(req, res) {
   }
   try {
 
-    const result = await prisma.blog.updateMany({
+    const blog = await prisma.blog.update({
       where: {
         id,
         isPublished: true
@@ -26,16 +26,12 @@ async function unpublishBlog(req, res) {
       }
     });
 
-    if (result.count === 0) {
-      return res.status(404).json({
-        success: false,
-        message: "Blog not found or already un-published"
-      });
-    }
+    
 
     return res.status(200).json({
       success: true,
-      message: "Unpublished blog"
+      message: "Unpublished blog",
+      blog:blog
     });
 
   } catch (err) {

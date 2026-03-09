@@ -123,7 +123,7 @@ const Hero = () => {
           mt: { xs: 4, md: 0 },
         }}
       >
-      {console.log("Hero",data?.blogs[0])}
+      
       <CardInfo blog={data?.blogs[0]} />
         
       </Grid>

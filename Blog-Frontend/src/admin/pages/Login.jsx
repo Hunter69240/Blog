@@ -9,19 +9,37 @@ import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
+import { LoginFunc } from "../services/adminServices";
+import { useMutation } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [viewPwd, setViewPwd] = useState(false);
-  const [error,setError]=useState({
-    email:"",
-    password:""
-  })
-  const handleSubmit = () => {
+  const [error, setError] = useState({
+    email: "",
+    password: "",
+  });
+  const [loginError, setLoginError] = useState("");
+  const navigate = useNavigate();
+  const { mutate, isLoading, data } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: () => LoginFunc(email, password),
+    onSuccess: (data) => {
+      setLoginError("");
+      localStorage.setItem("token",data.token)
+      navigate('/admin')
+    },
+    onError: (err) => {
+      setLoginError(err.response.data.message|| "Login failed. Please try again.");
+    },
+});
 
+  const handleSubmit = () => {
     let newErrors = {
       email: "",
-      password: ""
+      password: "",
     };
 
     if (!email) {
@@ -34,10 +52,9 @@ const Login = () => {
 
     setError(newErrors);
 
-   
     if (newErrors.email || newErrors.password) return;
-
-    console.log(email, password);
+    
+    mutate();
   };
 
   return (
@@ -51,35 +68,42 @@ const Login = () => {
     >
       <Stack spacing={3}>
         <Typography variant="h3">Login</Typography>
-            <TextField
-                placeholder="Enter email"
-                value={email}
-                label="Email"
-                onChange={(e) => setEmail(e.target.value)}
-                error={Boolean(error.email)}
-                helperText={error.email}
-            />
-            <TextField
-                    placeholder="Enter password"
-                    type={viewPwd ? "text" : "password"}
-                    value={password}
-                    label="Password"
-                    onChange={(e) => setPassword(e.target.value)}
-                    InputProps={{
-                        endAdornment: (
-                        <InputAdornment position="end">
-                            <IconButton onClick={() => setViewPwd(!viewPwd)}>
-                            {viewPwd ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                        </InputAdornment>
-                        ),
-                    }}
-                    error={Boolean(error.password)}
-                helperText={error.password}
-                    />
-            <Button onClick={handleSubmit} variant="outlined">
-            Login
-            </Button>
+
+        {loginError && (
+          <Typography color="error" variant="body2">
+            {loginError}
+          </Typography>
+        )}
+
+        <TextField
+          placeholder="Enter email"
+          value={email}
+          label="Email"
+          onChange={(e) => setEmail(e.target.value)}
+          error={Boolean(error.email)}
+          helperText={error.email}
+        />
+        <TextField
+          placeholder="Enter password"
+          type={viewPwd ? "text" : "password"}
+          value={password}
+          label="Password"
+          onChange={(e) => setPassword(e.target.value)}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={() => setViewPwd(!viewPwd)}>
+                  {viewPwd ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          error={Boolean(error.password)}
+          helperText={error.password}
+        />
+        <Button onClick={handleSubmit} variant="outlined" disabled={isLoading}>
+          {isLoading ? "Logging in..." : "Login"}
+        </Button>
       </Stack>
     </Box>
   );
