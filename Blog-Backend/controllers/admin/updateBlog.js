@@ -90,7 +90,7 @@ async function updateBlog(req, res) {
 
   } catch (err) {
 
-    console.log("update blog error", err);
+
 
     if (err.code === "P2002") {
       return res.status(400).json({

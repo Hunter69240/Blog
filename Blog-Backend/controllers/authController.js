@@ -32,6 +32,7 @@ async function login(req, res) {
     
     if (!user) {
       return res.status(401).send({
+        success:false,
         message: "Invalid credentials - line 36"
       });
     }
@@ -40,6 +41,7 @@ async function login(req, res) {
 
     if (!isMatch) {
       return res.status(401).send({
+        success:false,
         message: "Invalid credentials - line 44"
       });
     }

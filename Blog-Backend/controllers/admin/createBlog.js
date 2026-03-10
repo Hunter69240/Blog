@@ -12,6 +12,7 @@ async function createBlog(req, res) {
 
   if (!title || !content || !cover_image || !tag || !description) {
     return res.status(400).json({
+      success: false,
       message: "Incomplete data"
     });
   }
@@ -42,8 +43,6 @@ async function createBlog(req, res) {
     });
 
   } catch (error) {
-
-    console.log("Inside createBlog catch", error);
 
     if (error.code === "P2002") {
       return res.status(400).json({

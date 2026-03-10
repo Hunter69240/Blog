@@ -1,16 +1,7 @@
-const express=require("express");
-const cors = require('cors');
-require('dotenv').config();
-const app=express()
-const port=3000
-app.use(express.json());
-const mainRoutes=require("./routes/blog_routes")
+const app = require("./app");
 
-app.use(cors())
+const port = 3000;
 
-
-app.use("/api",mainRoutes)
-
-app.listen(port,()=>{
-    console.log(`Running in  http://localhost:${port} `)
-})
+app.listen(port, () => {
+    console.log(`Running in http://localhost:${port}`);
+});

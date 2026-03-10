@@ -14,28 +14,35 @@ async function publishBlog(req, res) {
     });
   }
   try {
-    
+
+    const existingBlog = await prisma.blog.findUnique({ where: { id } });
+
+    if (!existingBlog) {
+      return res.status(404).json({
+        success: false,
+        message: "Blog not found"
+      });
+    }
+
+    if (existingBlog.isPublished) {
+      return res.status(409).json({
+        success: false,
+        message: "Blog already published"
+      });
+    }
+
     const blog = await prisma.blog.update({
-      where: {
-        id,
-        isPublished: false
-      },
-      data: {
-        isPublished: true
-      }
+      where: { id },
+      data: { isPublished: true }
     });
 
     return res.status(200).json({
       success: true,
       message: "Published blog",
-      blog:blog
-      
+      blog: blog
     });
 
   } catch (err) {
-
-    console.log("publishBlog error", err);
-
     return res.status(500).json({
       success: false,
       message: "Error publishing blog"
