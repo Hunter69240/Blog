@@ -17,9 +17,9 @@ const CardInfo = ({blog}) => {
   
 
   const handleClick = ()=>{
-   
     navigate(`/blog/${slug}`)
   }
+
   return (
     <Box
       id={id}
@@ -32,21 +32,15 @@ const CardInfo = ({blog}) => {
         borderRadius: 3,
         overflow: "hidden",
         cursor: "pointer",
-
-       
         border:
           theme.palette.mode === "light"
             ? `1px solid ${theme.palette.divider}`
             : "none",
-
-       
         boxShadow:
           theme.palette.mode === "light"
             ? "0 4px 20px rgba(0,0,0,0.04)"
             : "none",
-
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
-
         "&:hover": {
           transform: "translateY(-6px)",
           boxShadow:
@@ -57,7 +51,6 @@ const CardInfo = ({blog}) => {
       })}
     >
       <Stack spacing={2} alignItems="flex-start">
-       
         <Typography
           sx={{
             color: "primary.main",

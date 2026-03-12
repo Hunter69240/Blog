@@ -5,6 +5,7 @@ import Admin from "./admin/pages/Admin";
 import Login from "./admin/pages/Login";
 import ProtectedRoute from "./ProtectedRoute"
 import EditBlog from "./admin/components/EditBlog";
+import AdminSelectedCard from "./admin/components/AdminSelectedCard";
 function App({ mode, setMode }) {
   return (
     <Routes>
@@ -16,6 +17,7 @@ function App({ mode, setMode }) {
       <Route element={<ProtectedRoute/>}>
         <Route path="/admin" element={<Admin mode={mode} setMode={setMode}/>}/>
         <Route path="/admin/edit/:id" element={<EditBlog mode={mode} setMode={setMode}/>}/>
+        <Route path="/admin/blog/:slug" element={<AdminSelectedCard mode={mode} setMode={setMode}/>}/>
       </Route>
       
     </Routes>

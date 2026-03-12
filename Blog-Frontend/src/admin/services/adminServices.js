@@ -50,20 +50,7 @@ export const unPublishBlogs = async(id)=>{
 }
 
 
-export const uploadImage = async (file) => {
-    try {
-        const formData = new FormData()
-        formData.append("file", file)
-        formData.append("upload_preset", import.meta.env.VITE_IMAGE_UPLOAD_PRESET)
 
-        const data = await imageApi(formData)
-        return data.secure_url 
-
-    } catch (error) {
-        console.log("uploadImage", error)
-        throw error
-    }
-}
 
 export const createBlog = async (payload)=>{
     try{
@@ -74,3 +61,42 @@ export const createBlog = async (payload)=>{
         throw error
     }
 }
+
+
+
+export const uploadImage = async (file) => {
+    try {
+        const formData = new FormData()
+        formData.append("file", file)
+        formData.append("upload_preset", import.meta.env.VITE_IMAGE_UPLOAD_PRESET)
+
+        const data = await imageApi(formData)
+        return data.secure_url
+
+    } catch (error) {
+        console.log("uploadImage", error)
+        throw error
+    }
+}
+
+export const updateBlog = async (id, payload) => {
+    try {
+        const res = await api.patch(`/blogs/${id}`, payload)
+        return res.data
+    } catch (error) {
+        console.log("updateBlog", error)
+        throw error
+    }
+}
+
+
+export const getBlog = async (slug)=>{
+    try{
+        const res=await api.get(`/blogs/${slug}`)
+        return res.data
+    }catch(error){
+        console.log("getBlog",error)
+        throw error
+    }
+}
+

@@ -23,7 +23,7 @@ const Login = () => {
   });
   const [loginError, setLoginError] = useState("");
   const navigate = useNavigate();
-  const { mutate, isLoading, data } = useMutation({
+  const { mutate, isPending, data } = useMutation({
     mutationKey: ["login"],
     mutationFn: () => LoginFunc(email, password),
     onSuccess: (data) => {
@@ -101,8 +101,8 @@ const Login = () => {
           error={Boolean(error.password)}
           helperText={error.password}
         />
-        <Button onClick={handleSubmit} variant="outlined" disabled={isLoading}>
-          {isLoading ? "Logging in..." : "Login"}
+        <Button onClick={handleSubmit} variant="outlined" disabled={isPending}>
+          {isPending ? "Logging in..." : "Login"}
         </Button>
       </Stack>
     </Box>

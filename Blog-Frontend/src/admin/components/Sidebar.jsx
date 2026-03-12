@@ -20,6 +20,7 @@ const Sidebar = ({setView}) => {
             <ListItemText>Create Blog</ListItemText>
           </ListItemButton>
         </ListItem>
+
       </List>
     </Box>
   )

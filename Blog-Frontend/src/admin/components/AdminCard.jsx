@@ -18,7 +18,7 @@ const AdminCard = ({blog}) => {
   const {id, title, slug, coverImage, createdAt, tag, description,isPublished} = blog
 
   const handleClick = () => {
-    navigate(`/blog/${slug}`)
+    navigate(`/admin/blog/${slug}`)
   }
 
   const handleEdit=()=>{
@@ -34,7 +34,7 @@ const AdminCard = ({blog}) => {
   })
 
   const {mutate:unPublish}=useMutation({
-    mutationKey:["published"],
+    mutationKey:["unpublished"],
     mutationFn:()=>unPublishBlogs(id),
     onSuccess:()=>{
       queryClient.invalidateQueries(["adminArticles"])
