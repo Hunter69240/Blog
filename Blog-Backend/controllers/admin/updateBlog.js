@@ -55,7 +55,7 @@ async function updateBlog(req, res) {
             });
         }
 
-        // 👇 Delete old image from Cloudinary if image changed
+        
         if (existing.coverImage && cover_image && existing.coverImage !== cover_image) {
             try {
                 const oldUrl = existing.coverImage.split('?')[0]  // 👈 strip ?t= timestamp
@@ -65,10 +65,12 @@ async function updateBlog(req, res) {
                 const publicId = withoutVersion.replace(/\.[^/.]+$/, '')
 
                 await cloudinary.uploader.destroy(publicId)
-                console.log("Old image deleted:", publicId)
             } catch (err) {
-                console.log("Failed to delete old image:", err)
-                // don't block update if delete fails
+                return res.status(500).json({
+                    success: false,
+                    message: "Error deleting old cover image"
+                });
+                
             }
         }
 
@@ -85,6 +87,13 @@ async function updateBlog(req, res) {
                 .trim()
                 .replace(/[^a-z0-9 ]/g, "")
                 .replace(/\s+/g, "-");
+
+            if (!newSlug) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Title must contain at least one alphanumeric character"
+                });
+            }
         }
 
         const updated = await prisma.blog.update({

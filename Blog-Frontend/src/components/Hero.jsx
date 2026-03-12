@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import Socials from "./Socials";
 import Grid from "@mui/material/Grid";
 import { getBlogs } from "../services/blogService";
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 
@@ -15,7 +15,7 @@ const Hero = () => {
     queryKey:["blog",1,1],
     queryFn:()=>getBlogs(1,1),
     staleTime:Infinity,
-    keepPreviousData : true
+    placeholderData:keepPreviousData,
   })
 
     if (isLoading) {

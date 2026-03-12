@@ -1,10 +1,3 @@
-/*
- * Method: POST
- * URL: /login
- * Body: Yes (email, password)
- * Params: No
- */
-
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const prisma = require("../lib/prisma");
@@ -20,7 +13,6 @@ async function login(req, res) {
   }
 
   try {
-
     const user = await prisma.user.findUnique({
       where: { email },
       select: {
@@ -29,11 +21,11 @@ async function login(req, res) {
         passwordHash: true
       }
     });
-    
+
     if (!user) {
       return res.status(401).send({
-        success:false,
-        message: "Invalid credentials - line 36"
+        success: false,
+        message: "Invalid credentials"
       });
     }
 
@@ -41,8 +33,8 @@ async function login(req, res) {
 
     if (!isMatch) {
       return res.status(401).send({
-        success:false,
-        message: "Invalid credentials - line 44"
+        success: false,
+        message: "Invalid credentials"
       });
     }
 
@@ -57,13 +49,21 @@ async function login(req, res) {
       { expiresIn: process.env.JWT_EXPIRES_IN }
     );
 
-    return res.send({
-      message: "Login successful",
-      token
+    // 👇 set cookie instead of returning token in response
+    res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",  // 👈
+    maxAge: 7 * 24 * 60 * 60 * 1000
+})
+
+    return res.json({
+      success: true,
+      message: "Login successful"
+      // 👈 no token in response body
     });
 
   } catch (err) {
-    console.error(err);
     return res.status(500).json({
       message: "Internal server error"
     });

@@ -17,6 +17,19 @@ router.post(
     login
 )
 
+router.post("/admin/logout", (req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict"
+    })
+    res.json({ success: true, message: "Logged out" })
+})
+
+// add this line with the other admin routes
+router.get("/admin/auth-check", requireUser, (req, res) => {
+    res.json({ success: true })
+})
 /* User side start*/
 router.get(
     "/blogs",

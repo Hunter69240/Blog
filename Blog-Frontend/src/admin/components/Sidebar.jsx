@@ -4,11 +4,24 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { logoutFunc } from '../services/adminServices';
 
-const Sidebar = ({setView}) => {
+const Sidebar = ({ setView }) => {
   return (
-    <Box sx={{ height: "100vh", whiteSpace: 'nowrap' }}>
+    <Box sx={{ height: "100vh", whiteSpace: 'nowrap', display: 'flex', flexDirection: 'column' }}>
+      
+      {/* 👇 logout at top */}
       <List>
+        <ListItem>
+          <ListItemButton onClick={logoutFunc}>
+            <LogoutIcon sx={{ mr: 1 }} fontSize="small" />
+            <ListItemText>Logout</ListItemText>
+          </ListItemButton>
+        </ListItem>
+      </List>
+
+      <List sx={{ flexGrow: 1 }}>
         <ListItem>
           <ListItemButton onClick={() => setView("view")}>
             <ListItemText>View Blog</ListItemText>
@@ -20,8 +33,8 @@ const Sidebar = ({setView}) => {
             <ListItemText>Create Blog</ListItemText>
           </ListItemButton>
         </ListItem>
-
       </List>
+
     </Box>
   )
 }

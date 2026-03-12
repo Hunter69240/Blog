@@ -56,31 +56,28 @@ const CreateBlog = () => {
     mutationKey: ["created"],
     mutationFn: (payload) => createBlog(payload),
     onSuccess: () => {
-      console.log("Blog created")
       resetForm()
       queryClient.invalidateQueries(["adminArticles"])
       setSuccess("Successfully uploaded blog")
       setTimeout(() => setSuccess(""), 3000)
     },
     onError: (error) => {
-      console.log("CreateBlog", error)
       setServerError(error.response?.data?.message || "Something went wrong")
     }
   })
 
   const handleUpload = async () => {
     try {
-      setUploading(true)
-      const url = await uploadImage(coverImage)
-      setCoverImageUrl(url)
-      setErrors((prev) => ({ ...prev, coverImage: "" }))
-      console.log("Image url", url)
-    } catch (error) {
-      console.log("Upload failed", error)
+        setUploading(true)
+        const url = await uploadImage(coverImage)
+        setCoverImageUrl(url)
+        setErrors((prev) => ({ ...prev, coverImage: "" }))
+    } catch {
+        setServerError("Image upload failed. Please try again.")  
     } finally {
-      setUploading(false)
+        setUploading(false)
     }
-  }
+}
 
   const handleSubmit = async () => {
     if (!validate()) return

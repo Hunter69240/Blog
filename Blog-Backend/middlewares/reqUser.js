@@ -1,38 +1,24 @@
-const jwt=require("jsonwebtoken")
+const jwt = require("jsonwebtoken")
+
 async function requireUser(req, res, next) {
     try {
-        
-        const {authorization}=req.headers
-    
-        if(!authorization){
+        // 👇 read from cookie instead of Authorization header
+        const token = req.cookies.token
+
+        if (!token) {
             return res.status(401).json({
-                message:"Authorization failed. No access token."
+                message: "Authorization failed. No access token."
             });
         }
 
-        
-        if (!authorization.startsWith("Bearer ")) {
-            return res.status(401).json({
-                message: "Unauthorized: Invalid token format"
-            });
-        }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-        const token=authorization.split(' ')[1]
-        
-        const decoded=jwt.verify(token,process.env.JWT_SECRET)
-            
-        const userId = decoded.id;
-    
-        
         req.user = decoded;
 
-      
         next();
     } catch (error) {
-       
         return res.status(401).json({
-            message: "Unauthorized: Invalid or expired token",
-            
+            message: "Unauthorized: Invalid or expired token"
         });
     }
 }

@@ -40,10 +40,10 @@ describe("Test extractHeadings",()=>{
         ### Heading level 3
         `
 
-        const result=[
+        expect(extractHeadings(markdown)).toEqual([
             {id:"title",text:"title",level:1},
             {id:"heading-level-2",text:"Heading level 2",level:2},
             {id:"heading-level-3",text:"Heading level 3",level:3}
-        ]
+        ])
     })
 })

@@ -14,6 +14,7 @@ import Button from '@mui/material/Button';
 import { format } from "date-fns";
 import { MuiMarkdown } from 'mui-markdown';
 import { useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
 const AdminSelectedCard = () => {
   const navigate = useNavigate()
   const { slug } = useParams()

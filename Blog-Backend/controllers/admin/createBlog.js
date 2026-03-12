@@ -23,6 +23,13 @@ async function createBlog(req, res) {
     .replace(/[^a-z0-9 ]/g, "")
     .replace(/\s+/g, "-");
 
+  if (!slug) {
+    return res.status(400).json({
+      success: false,
+      message: "Title must contain at least one alphanumeric character"
+    });
+  }
+
   try {
 
     const result = await prisma.blog.create({

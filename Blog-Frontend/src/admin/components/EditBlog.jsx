@@ -27,18 +27,18 @@ const EditBlog = ({ mode, setMode }) => {
     const [success, setSuccess] = useState("");
 
     const handleImageUpload = async (e) => {
-        const file = e.target.files[0]
-        if (!file) return
-        try {
-            setUploading(true)
-            const url = await uploadImage(file)
-            setCoverImage(`${url}?t=${Date.now()}`)  
-        } catch (error) {
-            console.log("Image upload failed", error)
-        } finally {
-            setUploading(false)
-        }
+    const file = e.target.files[0]
+    if (!file) return
+    try {
+        setUploading(true)
+        const url = await uploadImage(file)
+        setCoverImage(`${url}?t=${Date.now()}`)
+    } catch {
+        setServerError("Image upload failed. Please try again.")
+    } finally {
+        setUploading(false)
     }
+}
 
     const { mutate: saveChanges, isPending } = useMutation({
         mutationKey: ["updated"],
@@ -48,9 +48,8 @@ const EditBlog = ({ mode, setMode }) => {
             queryClient.invalidateQueries(["blogs"])
             setTimeout(() => navigate(-1), 1500)
         },
-        onError: (error) => {
+        onError: () => {
             setServerError("Failed to update blog. Please try again.")
-            console.log("Update failed", error)
         }
     })
 

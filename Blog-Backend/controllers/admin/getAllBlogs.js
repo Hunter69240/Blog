@@ -40,7 +40,6 @@ async function getAllBlogs(req, res) {
     });
 
   } catch (error) {
-    console.log("getAllBlogs error", error);
     res.status(500).json({
       success: false,
       message: "Error viewing blogs",

@@ -1,23 +1,17 @@
 import axios from "axios"
 
 export const api = axios.create({
-    baseURL: import.meta.env.VITE_ADMIN_API_URL
+    baseURL: import.meta.env.VITE_ADMIN_API_URL,
+    withCredentials: true  // 👈 sends cookies automatically
 })
 
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token")
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
-})
+// 👇 remove entire request interceptor (no more localStorage)
 
 api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401 && !error.config.url.includes("/login")) {
-            localStorage.removeItem("token")
-            window.location.href = "/admin/login"
+            window.location.href = "/admin/login"  // 👈 removed localStorage.removeItem
         }
         return Promise.reject(error)
     }

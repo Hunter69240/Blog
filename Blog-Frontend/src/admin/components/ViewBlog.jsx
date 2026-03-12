@@ -7,7 +7,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 
 import {getAdminBlogs} from "../services/adminServices"
-import { useQuery } from "@tanstack/react-query";
+import {keepPreviousData, useQuery } from "@tanstack/react-query";
 const ViewBlog = () => {
 
   const [page, setPage] = useState(1);
@@ -25,7 +25,8 @@ const ViewBlog = () => {
       queryKey: ["adminArticles", page, 4],
       queryFn: () => getAdminBlogs(page, 4),
       staleTime: Infinity,
-      keepPreviousData: true,
+      placeholderData:keepPreviousData,
+
     });
 
   if (error) {

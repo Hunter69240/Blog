@@ -10,7 +10,7 @@ async function getAllBlogs(req, res) {
   try {
 
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 4;
+    const limit = Math.min(parseInt(req.query.limit) || 4, 50);
 
     const skip = (page - 1) * limit;
 
@@ -60,8 +60,6 @@ async function getAllBlogs(req, res) {
     });
 
   } catch (err) {
-    console.error("getAllBlogs error", err);
-
     return res.status(500).json({
       success: false,
       message: "Error fetching blogs"

@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import { useNavigate } from 'react-router-dom';
 import { format } from "date-fns";
 
-import { useMutation,useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { publishBlogs } from "../services/adminServices";
 import { unPublishBlogs } from "../services/adminServices";
 
@@ -14,6 +14,23 @@ const AdminCard = ({blog}) => {
   
   const navigate = useNavigate();
   const queryClient=useQueryClient()
+
+  const {mutate:publish}=useMutation({
+    mutationKey:["published"],
+    mutationFn:()=>publishBlogs(blog?.id),
+    onSuccess:()=>{
+      queryClient.invalidateQueries(["adminArticles"])
+    }
+  })
+
+  const {mutate:unPublish}=useMutation({
+    mutationKey:["unpublished"],
+    mutationFn:()=>unPublishBlogs(blog?.id),
+    onSuccess:()=>{
+      queryClient.invalidateQueries(["adminArticles"])
+    }
+  })
+
   if (!blog) return null
   const {id, title, slug, coverImage, createdAt, tag, description,isPublished} = blog
 
@@ -24,22 +41,6 @@ const AdminCard = ({blog}) => {
   const handleEdit=()=>{
     navigate(`/admin/edit/${id}`,{state:blog})
   }
-
-  const {mutate:publish}=useMutation({
-    mutationKey:["published"],
-    mutationFn:()=>publishBlogs(id),
-    onSuccess:()=>{
-      queryClient.invalidateQueries(["adminArticles"])
-    }
-  })
-
-  const {mutate:unPublish}=useMutation({
-    mutationKey:["unpublished"],
-    mutationFn:()=>unPublishBlogs(id),
-    onSuccess:()=>{
-      queryClient.invalidateQueries(["adminArticles"])
-    }
-  })
 
   const handlePublish = ()=>{
       publish()

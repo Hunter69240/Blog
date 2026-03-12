@@ -23,18 +23,18 @@ const Login = () => {
   });
   const [loginError, setLoginError] = useState("");
   const navigate = useNavigate();
-  const { mutate, isPending, data } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationKey: ["login"],
     mutationFn: () => LoginFunc(email, password),
-    onSuccess: (data) => {
+    onSuccess: () => {
       setLoginError("");
-      localStorage.setItem("token",data.token)
+      // 👈 removed localStorage.setItem — cookie is set by backend automatically
       navigate('/admin')
     },
     onError: (err) => {
-      setLoginError(err.response.data.message|| "Login failed. Please try again.");
+      setLoginError(err.response?.data?.message || "Login failed. Please try again.");
     },
-});
+  });
 
   const handleSubmit = () => {
     let newErrors = {
@@ -53,7 +53,7 @@ const Login = () => {
     setError(newErrors);
 
     if (newErrors.email || newErrors.password) return;
-    
+
     mutate();
   };
 

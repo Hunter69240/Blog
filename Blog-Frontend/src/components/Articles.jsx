@@ -8,7 +8,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 
 import { getBlogs } from "../services/blogService";
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData,useQuery } from "@tanstack/react-query";
 
 const Articles = () => {
   const [page, setPage] = useState(1);
@@ -26,7 +26,7 @@ const Articles = () => {
     queryKey: ["articles", page, 4],
     queryFn: () => getBlogs(page, 4),
     staleTime: Infinity,
-    keepPreviousData: true,
+    placeholderData: keepPreviousData,
   });
 
   

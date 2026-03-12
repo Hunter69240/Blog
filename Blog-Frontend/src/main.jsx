@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import {
-  useQuery,
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
@@ -19,6 +18,7 @@ import "@fontsource/inter/600.css";
 
 import App from "./App.jsx";
 const queryClient = new QueryClient()
+// eslint-disable-next-line react-refresh/only-export-components
 function Root() {
   const [mode, setMode] = useState("light");
 
@@ -26,11 +26,12 @@ function Root() {
     createTheme({
       palette: {
         mode: mode,
-      },
-      primary: {
+         primary: {
         main: "#8481E6",
        
       },
+      },
+     
      
        typography: {
        fontFamily: "Inter, sans-serif", // default body font
@@ -75,7 +76,7 @@ function Root() {
           </StrictMode>
         </BrowserRouter>
       </ThemeProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
 
   );
