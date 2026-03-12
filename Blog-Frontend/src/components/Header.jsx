@@ -4,13 +4,18 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
-
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Header = ({ mode, setMode }) => {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const isAbout = location.pathname === '/about'
 
   const toggleMode = () => {
     setMode(prev => prev === "light" ? "dark" : "light");
   };
+
+  const handleClick = () => navigate("/about")
 
   return (
     <>
@@ -24,14 +29,12 @@ const Header = ({ mode, setMode }) => {
           px: 4,
           py: 1.5,
           position: "sticky",
-          zIndex: 1100,  
-          top:0,
-          borderBottom:1,
+          zIndex: 1100,
+          top: 0,
+          borderBottom: 1,
           borderColor: "divider"
         }}
-        
       >
-        
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Box
             component="img"
@@ -39,25 +42,31 @@ const Header = ({ mode, setMode }) => {
             alt="DevBlog logo"
             sx={{ height: 40 }}
           />
-
           <Typography variant="h5" sx={{ color: "primary.main", fontWeight: 600 }}>
             DevBlog
           </Typography>
         </Box>
 
-      
         <Box sx={{ display: "flex", alignItems: "center", gap: 4 }}>
-          <Typography sx={{ cursor: "pointer" }}>Articles</Typography>
-          <Typography sx={{ cursor: "pointer" }}>About</Typography>
+          <Button
+            onClick={handleClick}
+            variant={isAbout ? "contained" : "text"}
+            color="primary"
+            sx={{
+              cursor: "pointer",
+              textTransform: 'none',
+              fontWeight: isAbout ? 700 : 400,
+              borderRadius: 2,
+            }}
+          >
+            About
+          </Button>
 
           <Button onClick={toggleMode} color="inherit">
             {mode === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
           </Button>
         </Box>
-      
-        
       </Box>
-      
     </>
   );
 };

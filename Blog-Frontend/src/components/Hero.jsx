@@ -104,11 +104,11 @@ const Hero = () => {
             />
             <Socials
               media="linkedin"
-              url=""
+              url="https://www.linkedin.com/in/aadish-d-somayaji-787b952a8/"
             />
             <Socials
               media="portfolio"
-              url=""
+              url="https://www.aadishds.me/"
             />
           </Stack>
         </Stack>

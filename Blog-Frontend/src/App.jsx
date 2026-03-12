@@ -6,12 +6,13 @@ import Login from "./admin/pages/Login";
 import ProtectedRoute from "./ProtectedRoute"
 import EditBlog from "./admin/components/EditBlog";
 import AdminSelectedCard from "./admin/components/AdminSelectedCard";
+import About from "./pages/About";
 function App({ mode, setMode }) {
   return (
     <Routes>
       <Route path="/" element={<Home mode={mode} setMode={setMode} />} />
       <Route path="/blog/:slug" element={<SelectedArticle/>}/>
-
+      <Route path="/about" element={<About mode={mode} setMode={setMode}/>}/>
       <Route path="/admin/login" element={<Login/>}/>
       
       <Route element={<ProtectedRoute/>}>

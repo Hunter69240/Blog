@@ -11,7 +11,7 @@ export default function ProtectedRoute() {
         retry: false,
         staleTime: 5 * 60 * 1000
     })
-
+    
     if (isLoading) {
         return (
             <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
