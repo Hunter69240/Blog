@@ -56,7 +56,7 @@ const SelectedArticle = () => {
         )
     }
 
-    const { title = "", tag = "", content = "", createdAt ,coverImage} = data.blog
+    const { title = "", tag = "", content = "", createdAt, coverImage } = data.blog
 
     return (
         <Stack direction="row" sx={{ px: { xs: 1, md: 4 }, py: 4 }}>
@@ -116,8 +116,21 @@ const SelectedArticle = () => {
                             "& p": { fontSize: "18px", lineHeight: 1.9, color: "text.primary" },
                             "& ul": { pl: 3 },
                             "& li": { mb: 1 },
-                            "& pre": { backgroundColor: "#0f172a", padding: 2, borderRadius: 2, overflowX: "auto" },
-                            "& code": { fontFamily: "monospace" },
+                            "& pre": {
+                                backgroundColor: "#0f172a",
+                                padding: 2,
+                                borderRadius: 2,
+                                overflowX: "auto",
+                                color: "#e2e8f0",        
+                            },
+                            "& pre *": {                 
+                                color: "#e2e8f0 !important",
+                                backgroundColor: "transparent !important",
+                            },
+                            "& code": {
+                                fontFamily: "monospace",
+                                color: "#e2e8f0",
+                            },
                         }}
                     >
                         <MuiMarkdown>{content}</MuiMarkdown>

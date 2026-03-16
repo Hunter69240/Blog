@@ -40,7 +40,7 @@ const EditBlog = ({ mode, setMode }) => {
     }
 }
 
-    const { mutate: saveChanges, isPending } = useMutation({
+    const { mutate: saveChanges, isPending  } = useMutation({
         mutationKey: ["updated"],
         mutationFn: (payload) => updateBlog(id, payload),
         onSuccess: () => {
@@ -48,8 +48,8 @@ const EditBlog = ({ mode, setMode }) => {
             queryClient.invalidateQueries(["blogs"])
             setTimeout(() => navigate(-1), 1500)
         },
-        onError: () => {
-            setServerError("Failed to update blog. Please try again.")
+        onError: (error) => {
+            setServerError(error.response?.data?.message ||"Failed to update blog. Please try again.")
         }
     })
 

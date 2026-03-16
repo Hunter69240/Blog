@@ -1,4 +1,4 @@
-import React,{useMemo} from 'react'
+import React, { useMemo } from 'react'
 import { useParams } from "react-router-dom";
 import { getBlog } from '../services/adminServices';
 import { useQuery } from '@tanstack/react-query';
@@ -15,47 +15,49 @@ import { format } from "date-fns";
 import { MuiMarkdown } from 'mui-markdown';
 import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
+
 const AdminSelectedCard = () => {
-  const navigate = useNavigate()
-  const { slug } = useParams()
-  const theme = useTheme()
-  const isDesktop = useMediaQuery(theme.breakpoints.up("md"))
-  const { data, error, isLoading } = useQuery({
-      queryKey: ["blog", slug],
-      queryFn: () => getBlog(slug),
-      staleTime: 600000
-  })
+    const navigate = useNavigate()
+    const { slug } = useParams()
+    const theme = useTheme()
+    const isDesktop = useMediaQuery(theme.breakpoints.up("md"))
+    const { data, error, isLoading } = useQuery({
+        queryKey: ["blog", slug],
+        queryFn: () => getBlog(slug),
+        staleTime: 600000
+    })
 
-  const headings = useMemo(() => extractHeadings(data?.blog?.content), [data?.blog?.content])
+    const headings = useMemo(() => extractHeadings(data?.blog?.content), [data?.blog?.content])
 
-  const handleClick = () => navigate("/admin")
-  
-      if (error) {
-          return (
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                  <Alert severity="error">Error fetching Blog</Alert>
-              </Box>
-          )
-      }
-  
-      if (isLoading) {
-          return (
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                  <CircularProgress />
-              </Box>
-          )
-      }
-  
-      if (!data?.blog) {
-          return (
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                  <Alert severity="warning">Blog not found</Alert>
-              </Box>
-          )
-      }
-  const { title = "", tag = "", content = "", createdAt ,coverImage} = data.blog
-      
-  return (
+    const handleClick = () => navigate("/admin")
+
+    if (error) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <Alert severity="error">Error fetching Blog</Alert>
+            </Box>
+        )
+    }
+
+    if (isLoading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <CircularProgress />
+            </Box>
+        )
+    }
+
+    if (!data?.blog) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <Alert severity="warning">Blog not found</Alert>
+            </Box>
+        )
+    }
+
+    const { title = "", tag = "", content = "", createdAt, coverImage } = data.blog
+
+    return (
         <Stack direction="row" sx={{ px: { xs: 1, md: 4 }, py: 4 }}>
 
             <TableOfContent isDesktop={isDesktop} headings={headings} />
@@ -113,8 +115,21 @@ const AdminSelectedCard = () => {
                             "& p": { fontSize: "18px", lineHeight: 1.9, color: "text.primary" },
                             "& ul": { pl: 3 },
                             "& li": { mb: 1 },
-                            "& pre": { backgroundColor: "#0f172a", padding: 2, borderRadius: 2, overflowX: "auto" },
-                            "& code": { fontFamily: "monospace" },
+                            "& pre": {
+    backgroundColor: "#0f172a",
+    padding: 2,
+    borderRadius: 2,
+    overflowX: "auto",
+    color: "#e2e8f0",        // ← add this
+},
+"& pre *": {                 // ← targets ALL children inside pre
+    color: "#e2e8f0 !important",
+    backgroundColor: "transparent !important",
+},
+"& code": {
+    fontFamily: "monospace",
+    color: "#e2e8f0",
+},
                         }}
                     >
                         <MuiMarkdown>{content}</MuiMarkdown>

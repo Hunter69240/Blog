@@ -124,8 +124,12 @@ const Hero = () => {
         }}
       >
       
-      <CardInfo blog={data?.blogs[0]} />
-        
+      {data?.blogs?.length > 0 ? (
+          <CardInfo blog={data.blogs[0]} />
+        ) : (
+          <Typography color="text.secondary">No blogs yet</Typography>
+      )}
+
       </Grid>
     </Grid>
   );
