@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const rateLimit = require("express-rate-limit")
 
 const requireUser=require("../middlewares/reqUser")
 const login=require("../controllers/authController")
@@ -12,8 +13,15 @@ const unPublishBlog=require("../controllers/admin/unPublishBlog")
 const getAdminBlogs=require("../controllers/admin/getAllBlogs.js")
 const getAdminBlogBySlug=require("../controllers/admin/getBlogBySlug.js")
 
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: { success: false, message: "Too many login attempts, try again after 15 minutes" }
+})
+
 router.post(
     "/admin/login",
+    loginLimiter,
     login
 )
 
@@ -26,10 +34,10 @@ router.post("/admin/logout", (req, res) => {
     res.json({ success: true, message: "Logged out" })
 })
 
-// add this line with the other admin routes
 router.get("/admin/auth-check", requireUser, (req, res) => {
     res.json({ success: true })
 })
+
 /* User side start*/
 router.get(
     "/blogs",
