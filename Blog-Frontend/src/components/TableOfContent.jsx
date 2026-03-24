@@ -9,9 +9,9 @@ import ListItemText from '@mui/material/ListItemText'
 import MenuIcon from '@mui/icons-material/Menu'
 import CloseIcon from '@mui/icons-material/Close'
 
-const TOCContent = ({ headings, onClose }) => (
-    <Box sx={{ p: 2, minWidth: 220 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+const TOCContent = ({ headings, onClose, maxHeight }) => (
+    <Box sx={{ p: 2, minWidth: 220, display: 'flex', flexDirection: 'column', maxHeight: maxHeight ?? 'none' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1, flexShrink: 0 }}>
             <Typography variant="overline" fontWeight={700} color="text.secondary">
                 Table of Contents
             </Typography>
@@ -25,34 +25,36 @@ const TOCContent = ({ headings, onClose }) => (
         {!headings || headings.length === 0 ? (
             <Typography variant="body2" color="text.disabled">No headings found</Typography>
         ) : (
-            <List dense disablePadding>
-                {headings.map((h) => (
-                    <ListItemButton
-                        key={h.id}
-                        sx={{
-                            pl: h.level === 1 ? 1 : h.level === 2 ? 2.5 : 4,
-                            borderRadius: 1,
-                            py: 0.5
-                        }}
-                        onClick={() => {
-                            document.getElementById(h.id)?.scrollIntoView({ behavior: 'smooth' })
-                            onClose?.()
-                        }}
-                    >
-                        <ListItemText
-                            primary={h.text}
-                            slotProps={{
-                              primary:{
-                                fontSize: h.level === 1 ? '14px' : '13px',
-                                fontWeight: h.level === 1 ? 600 : 400,
-                                color: h.level === 1 ? 'text.primary' : 'text.secondary',
-                            }
+            <Box sx={{ overflowY: 'auto', flexGrow: 1 }}>
+                <List dense disablePadding>
+                    {headings.map((h) => (
+                        <ListItemButton
+                            key={h.id}
+                            sx={{
+                                pl: h.level === 1 ? 1 : h.level === 2 ? 2.5 : 4,
+                                borderRadius: 1,
+                                py: 0.5
                             }}
-                            
-                        />
-                    </ListItemButton>
-                ))}
-            </List>
+                            onClick={() => {
+                                document.getElementById(h.id)?.scrollIntoView({ behavior: 'smooth' })
+                                onClose?.()
+                            }}
+                        >
+                            <ListItemText
+                                primary={h.text}
+                                slotProps={{
+                                  primary:{
+                                    fontSize: h.level === 1 ? '14px' : '13px',
+                                    fontWeight: h.level === 1 ? 600 : 400,
+                                    color: h.level === 1 ? 'text.primary' : 'text.secondary',
+                                }
+                                }}
+                                
+                            />
+                        </ListItemButton>
+                    ))}
+                </List>
+            </Box>
         )}
     </Box>
 )
@@ -70,10 +72,14 @@ const TableOfContent = ({ isDesktop, headings = [] }) => {
                     width: 240,
                     flexShrink: 0,
                     mr: 3,
-                    display: { xs: 'none', md: 'block' }
+                    display: { xs: 'none', md: 'block' },
+                    // Cap height so it scrolls independently of the page
+                    maxHeight: 'calc(100vh - 100px)',
+                    display: { xs: 'none', md: 'flex' },
+                    flexDirection: 'column',
                 }}
             >
-                <TOCContent headings={headings} />
+                <TOCContent headings={headings} maxHeight="calc(100vh - 100px)" />
             </Box>
         )
     }
@@ -104,11 +110,17 @@ const TableOfContent = ({ isDesktop, headings = [] }) => {
                     sx: {
                         borderTopLeftRadius: 16,
                         borderTopRightRadius: 16,
-                        maxHeight: '60vh'
+                        maxHeight: '60vh',
+                        display: 'flex',
+                        flexDirection: 'column',
                     }
                 }}
             >
-                <TOCContent headings={headings} onClose={() => setDrawerOpen(false)} />
+                <TOCContent
+                    headings={headings}
+                    onClose={() => setDrawerOpen(false)}
+                    maxHeight="60vh"
+                />
             </Drawer>
         </>
     )
