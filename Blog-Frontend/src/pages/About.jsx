@@ -160,7 +160,7 @@ const About = ({ mode, setMode }) => {
           <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, flexWrap: 'wrap' }}>
             <Socials media="github" url="https://github.com/Hunter69240" />
             <Socials media="linkedin" url="https://www.linkedin.com/in/aadish-d-somayaji-787b952a8/" />
-            <Socials media="portfolio" url="https://www.aadishds.me/" />
+            <Socials media="portfolio" url="https://aadishds.live/" />
           </Box>
         </Box>
 

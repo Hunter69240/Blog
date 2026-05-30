@@ -108,7 +108,7 @@ const Hero = () => {
             />
             <Socials
               media="portfolio"
-              url="https://www.aadishds.me/"
+              url="https://aadishds.live/"
             />
           </Stack>
         </Stack>
