@@ -8,8 +8,6 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: blogdb
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -26,8 +24,6 @@ services:
       DATABASE_URL: postgresql://postgres:password@db:5432/blogdb
       DB_HOST: db
       PORT: 3000
-    ports:
-      - "3000:3000"
     depends_on:
       db:
         condition: service_healthy
@@ -37,6 +33,9 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - backend
 

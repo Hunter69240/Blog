@@ -3,7 +3,7 @@ WORKDIR /app
 
 # Copy package files and install ALL deps (need prisma CLI for generate + migrate)
 COPY package*.json ./
-RUN npm ci
+RUN npm ci  
 
 # Copy prisma schema first and generate client
 COPY prisma ./prisma
