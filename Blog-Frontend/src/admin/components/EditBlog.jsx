@@ -2,8 +2,9 @@ import React, { useState } from 'react'
 import { useParams } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
 import Header from './Header';
-import { Box, Typography, Button, Stack, TextField, Chip } from '@mui/material';
+import { Box, Typography, Button, Stack, TextField, Chip, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import SaveIcon from '@mui/icons-material/Save';
 import { uploadImage, updateBlog } from '../services/adminServices';
@@ -72,6 +73,9 @@ const EditBlog = ({ mode, setMode }) => {
             <Box sx={{ maxWidth: 700, margin: "40px auto", padding: "0 20px" }}>
 
                 <Stack direction="row" alignItems="center" spacing={1} mb={3}>
+                    <IconButton onClick={() => navigate(-1)} size="small">
+                        <ArrowBackIcon />
+                    </IconButton>
                     <EditIcon color="primary" />
                     <Typography variant="h5" fontWeight={600}>Edit Blog</Typography>
                 </Stack>
