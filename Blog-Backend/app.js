@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const app = express();
 const mainRoutes = require("./routes/blog_routes");
+const seoRoutes = require("./routes/seo_routes"); 
 
 app.use(express.json({ limit: '1mb' }))  
 app.use(cors({
@@ -12,6 +13,7 @@ app.use(cors({
     credentials: true
 }));
 app.use(cookieParser());
+app.use("/", seoRoutes); 
 app.use("/api", mainRoutes);
 
 module.exports = app;

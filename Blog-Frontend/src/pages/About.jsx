@@ -10,6 +10,7 @@ import Button from '@mui/material/Button'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useNavigate } from 'react-router-dom'
 import Socials from "../components/Socials"
+import { Helmet } from 'react-helmet-async'
 
 const About = ({ mode, setMode }) => {
   const isDark = mode === 'dark'
@@ -17,6 +18,16 @@ const About = ({ mode, setMode }) => {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      <Helmet>
+        <title>About · DevBlog</title>
+        <meta name="description" content="Aadish D Somayaji — Full Stack Developer based in Bangalore, writing about web development, React, UI/UX, and the occasional CUDA tangent." />
+        <link rel="canonical" href="https://blog.aadishds.live/about" />
+        <meta property="og:title" content="About · DevBlog" />
+        <meta property="og:description" content="Aadish D Somayaji — Full Stack Developer based in Bangalore, writing about web development, React, UI/UX, and the occasional CUDA tangent." />
+        <meta property="og:url" content="https://blog.aadishds.live/about" />
+        <meta property="og:type" content="profile" />
+        <meta name="twitter:card" content="summary" />
+      </Helmet>
       <Header mode={mode} setMode={setMode} />
 
       <Container maxWidth="md" sx={{ py: { xs: 6, md: 10 } }}>

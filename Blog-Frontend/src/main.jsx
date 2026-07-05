@@ -8,6 +8,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { HelmetProvider } from 'react-helmet-async';
 import "@fontsource/space-grotesk/400.css";
 import "@fontsource/space-grotesk/600.css";
 import "@fontsource/space-grotesk/700.css";
@@ -65,12 +66,13 @@ function Root() {
   [mode]);
 
   return (
-    <QueryClientProvider client={queryClient}>    
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <BrowserRouter>
-          <StrictMode>
-            <Routes>
+    <HelmetProvider>
+      <QueryClientProvider client={queryClient}>    
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <BrowserRouter>
+            <StrictMode>
+              <Routes>
               <Route path="*" element={<App mode={mode} setMode={setMode} />} />
             </Routes>
           </StrictMode>
@@ -78,6 +80,7 @@ function Root() {
       </ThemeProvider>
       {/* <ReactQueryDevtools initialIsOpen={false} /> */}
     </QueryClientProvider>
+    </HelmetProvider>
 
   );
 }

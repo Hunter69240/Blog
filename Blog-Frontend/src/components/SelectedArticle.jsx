@@ -6,6 +6,7 @@ import Stack from '@mui/material/Stack';
 import { useNavigate, useParams } from 'react-router-dom';
 import { MuiMarkdown } from 'mui-markdown';
 import { format } from "date-fns";
+import { Helmet } from 'react-helmet-async';
 import { getSelectedBlog } from '../services/blogService';
 import { useQuery } from '@tanstack/react-query'
 import CircularProgress from '@mui/material/CircularProgress';
@@ -34,9 +35,12 @@ const SelectedArticle = () => {
 
     if (error) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                <Alert severity="error">Error fetching Blog</Alert>
-            </Box>
+            <>
+                <Helmet><title>Error · DevBlog</title></Helmet>
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                    <Alert severity="error">Error fetching Blog</Alert>
+                </Box>
+            </>
         )
     }
 
@@ -50,16 +54,35 @@ const SelectedArticle = () => {
 
     if (!data?.blog) {
         return (
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-                <Alert severity="warning">Blog not found</Alert>
-            </Box>
+            <>
+                <Helmet><title>Not Found · DevBlog</title></Helmet>
+                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+                    <Alert severity="warning">Blog not found</Alert>
+                </Box>
+            </>
         )
     }
 
-    const { title = "", tag = "", content = "", createdAt, coverImage } = data.blog
+    const { title = "", tag = "", content = "", description = "", createdAt, coverImage } = data.blog
+    const canonicalUrl = `https://blog.aadishds.live/blog/${slug}`
 
     return (
         <Stack direction="row" sx={{ px: { xs: 1, md: 4 }, py: 4 }}>
+
+            <Helmet>
+                <title>{title} · DevBlog</title>
+                <meta name="description" content={description} />
+                <link rel="canonical" href={canonicalUrl} />
+                <meta property="og:title" content={title} />
+                <meta property="og:description" content={description} />
+                <meta property="og:image" content={coverImage} />
+                <meta property="og:url" content={canonicalUrl} />
+                <meta property="og:type" content="article" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={title} />
+                <meta name="twitter:description" content={description} />
+                <meta name="twitter:image" content={coverImage} />
+            </Helmet>
 
             <TableOfContent isDesktop={isDesktop} headings={headings} />
 
