@@ -43,4 +43,11 @@ const sitemapXml = async (req, res) => {
   }
 };
 
-module.exports = { robotsTxt, sitemapXml };
+const indexNowKeyFile = (req, res) => {
+  if (req.params.key !== process.env.INDEXNOW_KEY) {
+    return res.status(404).send("Not found");
+  }
+  res.type("text/plain").send(process.env.INDEXNOW_KEY);
+};
+
+module.exports = { robotsTxt, sitemapXml, indexNowKeyFile };

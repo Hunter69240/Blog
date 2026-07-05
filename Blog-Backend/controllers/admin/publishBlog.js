@@ -4,6 +4,7 @@
  */
 
 const prisma = require("../../lib/prisma");
+const notifyIndexNow = require("../../lib/indexNow");
 
 async function publishBlog(req, res) {
   const id = parseInt(req.params.id);
@@ -35,6 +36,8 @@ async function publishBlog(req, res) {
       where: { id },
       data: { isPublished: true }
     });
+
+    notifyIndexNow(blog.slug); // fire-and-forget, don't await — don't block the response on this
 
     return res.status(200).json({
       success: true,
