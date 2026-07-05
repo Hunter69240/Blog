@@ -29,9 +29,9 @@ jobs:
           script: |
             cd /home/ec2-user/Blog
             git pull origin main
-            sudo docker compose build
-            sudo docker compose up -d
-            sudo docker image prune -f
+            docker compose build
+            docker compose up -d
+            docker image prune -f
 
       - name: Health check
         uses: appleboy/ssh-action@v1.0.3
@@ -41,4 +41,4 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             sleep 10
-            curl -f https://blog.aadishds.live/ || (cd /home/ec2-user/Blog && git reset --hard HEAD~1 && sudo docker compose up -d --build)
+            curl -f https://blog.aadishds.live/ || (cd /home/ec2-user/Blog && git reset --hard HEAD~1 && docker compose up -d --build)
