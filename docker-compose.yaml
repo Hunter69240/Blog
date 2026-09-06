@@ -1,13 +1,12 @@
-version: '3.9'
-
 services:
   db:
+    container_name: blog-db
     image: postgres:16
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: blogdb
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -15,29 +14,42 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - default
 
   backend:
+    container_name: blog-backend
     build: ./Blog-Backend
     restart: unless-stopped
     env_file: ./Blog-Backend/.env
     environment:
-      DATABASE_URL: postgresql://postgres:password@db:5432/blogdb
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       DB_HOST: db
       PORT: 3000
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      default:
+      public:
+        aliases:
+          - backend
 
   frontend:
+    container_name: blog-frontend
     build: ./Blog-Frontend
     restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - backend
+    networks:
+      - public
 
 volumes:
   pgdata:
+
+networks:
+  default:
+  public:
+    external: true
