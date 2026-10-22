@@ -1,3 +1,4 @@
 .env
 
+*.bak
 hashpwd.js.env

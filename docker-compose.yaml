@@ -31,7 +31,7 @@ services:
         condition: service_healthy
     networks:
       default:
-      public:
+      backend_net:
         aliases:
           - backend
 
@@ -39,12 +39,11 @@ services:
     container_name: blog-frontend
     build: ./Blog-Frontend
     restart: unless-stopped
-    volumes:
-      - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
       - backend
     networks:
       - public
+      - backend_net
 
 volumes:
   pgdata:
@@ -53,3 +52,5 @@ networks:
   default:
   public:
     external: true
+  backend_net:
+    internal: true
